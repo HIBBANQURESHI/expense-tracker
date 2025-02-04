@@ -1,0 +1,42 @@
+.lnk {
+    text-decoration: none;
+    color: #055fc7; /* Light color for better readability */
+    font-weight: 700;
+    transition: color 0.3s ease-in-out;
+    font-size: 20px;
+  }
+  
+  .lnk:hover {
+    color: rgb(64, 97, 243); /* Subtle color change on hover */
+  }
+  
+  .btnStyle {
+    background: linear-gradient(135deg, rgb(64, 97, 243) #000);
+    border: 2px solid #1a0101;
+    color: #ffffff;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
+  }
+  
+  .btnStyle:hover {
+    background: #055fc7;
+    border-color: #055fc7;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgb(64, 97, 243);
+  }
+  
+  .btnStyle:active {
+    transform: scale(0.98);
+    box-shadow: 0px 2px 6px rgb(64, 97, 243);
+  }
+  
