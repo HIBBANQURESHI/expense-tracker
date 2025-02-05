@@ -282,13 +282,13 @@ const Home = () => {
                           onChange={handleChange}
                         >
                           <option value="">Choose...</option>
-                          <option value="Groceries">Groceries</option>
-                          <option value="Rent">Rent</option>
-                          <option value="Salary">Salary</option>
-                          <option value="Tip">Tip</option>
-                          <option value="Food">Food</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Utilities">Utilities</option>
+                          <option value="Groceries">Total Sale</option>
+                          <option value="Rent">Cash Sale </option>
+                          <option value="Salary">Card Sale </option>
+                          <option value="Tip">Cash Expense</option>
+                          <option value="Food">Card Expense</option>
+                          <option value="Medical">Remaining Balance</option>
+                          <option value="Utilities">Opening Balance</option>
                           <option value="Entertainment">Entertainment</option>
                           <option value="Transportation">Transportation</option>
                           <option value="Other">Other</option>

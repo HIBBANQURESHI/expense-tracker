@@ -67,13 +67,13 @@ const ModelForm = ({transaction, onClose, isShow}) => {
                 onChange={handleChange}
               >
                 <option value="">Choose...</option>
-                <option value="groceries">Groceries</option>
-                <option value="rent">Rent</option>
-                <option value="rent">Salary</option>
-                <option value="rent">Tip</option>
-                <option value="rent">Food</option>
-                <option value="rent">Medical</option>
-                <option value="utilities">Utilities</option>
+                <option value="groceries">Total Sale</option>
+                <option value="rent">Cash Sale</option>
+                <option value="rent">Card Sale</option>
+                <option value="rent">Cash Expense </option>
+                <option value="rent">Card Expense</option>
+                <option value="rent">Remaining Balance</option>
+                <option value="utilities">Opening Balance</option>
                 <option value="entertainment">Entertainment</option>
                 <option value="transportation">Transportation</option>
                 <option value="other">Other</option>
