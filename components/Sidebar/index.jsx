@@ -15,7 +15,7 @@ const Sidebar = () => {
     { title: 'Expense by cash', icon: <FaExchangeAlt />, path: '/expense-by-cash' },
     { title: 'Expense by credit', icon: <FaExchangeAlt />, path: '/expense-by-credit' },
     { title: 'Sale by cash', icon: <FaCreditCard />, path: '/SaleByCash', gap: true },
-    { title: 'Sale by credit', icon: <FaCreditCard />, path: '/SaleByCredit', gap: true },
+    { title: 'Sale by card', icon: <FaCreditCard />, path: '/CardSale', gap: true },
     { title: 'Bruce Company', icon: <HiOutlineOfficeBuilding />, path: '/BruceCompany' },
     { title: 'KPMG Company', icon: <HiOutlineOfficeBuilding />, path: '/KPMGCompany' },
     { title: 'Loan', icon: <FaBalanceScale />, path: '/loan' },
