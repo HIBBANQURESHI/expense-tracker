@@ -12,11 +12,13 @@ const Sidebar = () => {
 
   const Menus = [
     { title: 'Dashboard', icon: <FaChartPie />, path: '/' },
-    { title: 'Expense', icon: <FaExchangeAlt />, path: '/expense' },
-    { title: 'Sale', icon: <FaCreditCard />, path: '/sale', gap: true },
-    { title: 'Bruce Company', icon: <HiOutlineOfficeBuilding />, path: '/bruce-company' },
+    { title: 'Expense by cash', icon: <FaExchangeAlt />, path: '/expense-by-cash' },
+    { title: 'Expense by credit', icon: <FaExchangeAlt />, path: '/expense-by-credit' },
+    { title: 'Sale by cash', icon: <FaCreditCard />, path: '/SaleByCash', gap: true },
+    { title: 'Sale by credit', icon: <FaCreditCard />, path: '/SaleByCredit', gap: true },
+    { title: 'Bruce Company', icon: <HiOutlineOfficeBuilding />, path: '/BruceCompany' },
+    { title: 'KPMG Company', icon: <HiOutlineOfficeBuilding />, path: '/KPMGCompany' },
     { title: 'Loan', icon: <FaBalanceScale />, path: '/loan' },
-    { title: 'KPMG Company', icon: <HiOutlineOfficeBuilding />, path: '/kpmg-company' },
   ];
 
   return (
@@ -44,7 +46,7 @@ const Sidebar = () => {
         {/* Sidebar Menu */}
         <ul className="pt-6">
           {Menus.map((menu, index) => (
-            <li key={index} className={`mt-2 ${menu.gap ? 'mt-6' : ''}`}>
+            <li key={index} className={`mt-2 ${menu.gap ? '' : ''}`}>
               <Link
                 href={menu.path}
                 className="flex items-center gap-4 p-3 cursor-pointer rounded-md hover:bg-gray-700 transition"
