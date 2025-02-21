@@ -17,11 +17,11 @@ const Sidebar = () => {
 
   const Menus = [
     { title: 'Dashboard', icon: <MdDashboard />, path: '/' },
-    { title: 'Expense by Cash', icon: <MdOutlineAttachMoney />, path: '/expense-by-cash' },
-    { title: 'Expense by Credit', icon: <MdCreditCard />, path: '/expense-by-credit' },
-    { title: 'Sale by Cash', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
-    { title: 'Sale by Card', icon: <MdCreditCard />, path: '/CardSale' },
-    { title: 'Bruce Company', icon: <MdBusiness />, path: '/BruceCompany' },
+    { title: 'Cash Expense', icon: <MdOutlineAttachMoney />, path: '/expense-by-cash' },
+    { title: 'Card Expense', icon: <MdCreditCard />, path: '/expense-by-credit' },
+    { title: 'Cash Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
+    { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
+    { title: 'Brooze Company', icon: <MdBusiness />, path: '/BruceCompany' },
     { title: 'KPMG Company', icon: <MdBusiness />, path: '/KPMGCompany' },
     { title: 'Loan', icon: <MdAccountBalance />, path: '/loan' },
   ];
