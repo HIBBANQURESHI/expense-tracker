@@ -53,7 +53,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white text-black flex flex-col items-center p-8 font-poppins">
       <motion.h1 
-        className="text-5xl font-bold mb-10 text-black"
+        className="text-5xl font-semibold mb-10 text-black"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

@@ -9,16 +9,17 @@ import {
   MdCreditCard, 
   MdBusiness, 
   MdAccountBalance, 
-  MdMenu 
+  MdMenu, 
+  MdMoney,
 } from 'react-icons/md';
+
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
 
   const Menus = [
     { title: 'Dashboard', icon: <MdDashboard />, path: '/' },
-    { title: 'Cash Expense', icon: <MdOutlineAttachMoney />, path: '/expense-by-cash' },
-    { title: 'Card Expense', icon: <MdCreditCard />, path: '/expense-by-credit' },
+    { title: 'Expense', icon: <MdMoney />, path: '/Expense' },
     { title: 'Cash Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
     { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
     { title: 'Brooze Company', icon: <MdBusiness />, path: '/BruceCompany' },
