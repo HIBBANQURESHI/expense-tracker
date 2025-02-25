@@ -1,23 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #2563eb; /* Tailwind blue-600 */
+  --secondary: #374151; /* Tailwind gray-700 */
+  --transition-speed: 0.3s;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --primary: #3b82f6; /* Lighter blue for dark mode */
+    --secondary: #6b7280; /* Light gray */
   }
 }
 
 body {
+  @apply transition-colors duration-300 ease-in-out;
   color: var(--foreground);
   background: var(--background);
   font-family: 'Poppins', sans-serif;
+  
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar (optional, improves UI) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+/* Utility classes */
+.text-primary {
+  color: var(--primary);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.text-secondary {
+  color: var(--secondary);
+}
+
+.bg-secondary {
+  background-color: var(--secondary);
 }

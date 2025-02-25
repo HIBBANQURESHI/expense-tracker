@@ -48,49 +48,49 @@ const UpdateExpense = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Edit Expense</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-white text-gray-900 p-6">
+      <div className="bg-gray-100 p-8 rounded-lg shadow-md max-w-lg w-full border border-gray-300">
+        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Edit Expense</h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium">Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
             <input 
               type="text" 
               name="name" 
               value={sale.name} 
               onChange={handleChange} 
               required 
-              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-2 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter name"
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium">Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <input 
               type="text" 
               name="description" 
               value={sale.description} 
               onChange={handleChange} 
               required 
-              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-2 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter description"
             />
           </div>
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium">Amount</label>
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount</label>
             <input 
               type="number" 
               name="amount" 
               value={sale.amount} 
               onChange={handleChange} 
               required 
-              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-2 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter amount"
             />
           </div>
           <button 
             type="submit" 
-            className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 text-white font-semibold">
+            className="w-full py-3 px-5 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 text-white font-semibold shadow-md">
             Update Expense
           </button>
         </form>

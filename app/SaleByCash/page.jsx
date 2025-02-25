@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-// Dynamically import DatePicker to avoid SSR issues
 const DatePicker = dynamic(() => import('react-datepicker'), { ssr: false });
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -16,30 +15,42 @@ const SaleByCash = () => {
   const [sales, setSales] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchSales();
   }, []);
 
   const fetchSales = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get('http://localhost:4000/api/sales');
       if (response.data) {
         setSales(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       }
     } catch (error) {
+      toast.error('Unable to load sales data. Please try again later.');
       console.error('Error fetching sales:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:4000/api/sales/${id}`);
-      toast.success('Sale deleted successfully');
-      fetchSales();
-    } catch (error) {
-      toast.error('Error deleting sale');
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Are you sure you want to delete the sale for ${name}?`)) {
+      try {
+        await axios.delete(`http://localhost:4000/api/sales/${id}`);
+        toast.success('Sale deleted successfully');
+        fetchSales();
+      } catch (error) {
+        toast.error('Error deleting sale. Please try again.');
+      }
     }
+  };
+
+  const handleClearFilters = () => {
+    setSearch('');
+    setSelectedDate(null);
   };
 
   const filteredSales = sales.filter((sale) => {
@@ -48,71 +59,116 @@ const SaleByCash = () => {
     return matchesSearch && matchesDate;
   });
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <motion.div 
-      className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center" 
+      className="min-h-screen bg-white p-4 sm:p-6 flex flex-col items-center max-w-5xl mx-auto"
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      transition={{ duration: 0.5 }}>
-      <h1 className="text-4xl font-bold mb-6">Sales By Cash</h1>
+      transition={{ duration: 0.3 }}>
+      
+      <h1 className="text-2xl sm:text-3xl font-medium text-gray-800 mb-6">Sales Overview</h1>
 
-      <div className="flex gap-4 mb-6 w-full max-w-4xl">
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none"
-          placeholderText="Select a date"
-        />
-      </div>
-
-      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-gray-800">
-        <table className="min-w-full leading-normal">
-          <thead>
-            <tr className="bg-gray-700 text-white">
-              <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Description</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Created At</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredSales.length > 0 ? (
-              filteredSales.map((sale) => (
-                <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-600 transition">
-                  <td className="px-5 py-4 text-sm">{sale.name}</td>
-                  <td className="px-5 py-4 text-sm">{sale.description}</td>
-                  <td className="px-5 py-4 text-sm text-green-400">${sale.amount}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(sale.createdAt).toDateString()}</td>
-                  <td className="px-5 py-4 text-sm">
-                    <Link href={`/UpdateSale/${sale._id}`}>
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
-                    </Link>
-                    <button onClick={() => handleDelete(sale._id)} className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition-all">Delete</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="px-5 py-4 text-center text-gray-400">No sales found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <Link href="/CreateSale">
-        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-          Create Sale
+      <div className="flex flex-col sm:flex-row gap-3 mb-6 w-full">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full p-2 sm:p-3 rounded-md bg-gray-50 text-gray-800 border border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 transition-all"
+          />
+          {search && (
+            <button 
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <div className="flex-1">
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            className="w-full p-2 sm:p-3 rounded-md bg-gray-50 text-gray-800 border border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 transition-all"
+            placeholderText="Filter by date"
+            dateFormat="MMM d, yyyy"
+          />
+        </div>
+        <Link href="/CreateSale">
+        <button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition-colors shadow-sm">
+          + New Sale
         </button>
       </Link>
+      </div>
+
+      {isLoading ? (
+        <div className="w-full flex justify-center py-10">
+          <div className="animate-pulse text-gray-500">Loading sales data...</div>
+        </div>
+      ) : (
+        <div className="w-full rounded-lg shadow-sm border border-gray-100 bg-white overflow-hidden">
+          {filteredSales.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Description</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Amount</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSales.map((sale) => (
+                    <tr key={sale._id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-800">{sale.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{sale.description}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-green-600">${sale.amount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(sale.createdAt)}</td>
+                      <td className="px-4 py-3 text-sm space-x-2">
+                        <Link href={`/UpdateSale/${sale._id}`}>
+                          <button className="text-blue-600 py-1 px-3 rounded text-md font-normal transition-colors">Edit</button>
+                        </Link>
+                        <button 
+                          onClick={() => handleDelete(sale._id, sale.name)} 
+                          className="text-red-600 py-1 px-3 rounded text-md font-normal transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              {search || selectedDate ? (
+                <div>
+                  <p>No sales match your search criteria.</p>
+                  <button
+                    onClick={handleClearFilters}
+                    className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              ) : (
+                <p>No sales records found. Create your first sale to get started.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      
     </motion.div>
   );
 };

@@ -2,19 +2,37 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const Section = ({ title, children }) => (
+const StatCard = ({ title, value, secondaryValue, isAmount = false, colorClass = "text-gray-900" }) => (
   <motion.div 
-    className="w-full p-6 bg-white rounded-xl shadow-md border border-gray-900 transition-transform transform hover:scale-105 hover:shadow-xl" 
-    initial={{ opacity: 0, y: 20 }} 
-    animate={{ opacity: 1, y: 0 }} 
-    transition={{ duration: 0.4 }}
+    className="w-full p-5 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
   >
-    <h2 className="text-2xl font-semibold text-gray-900 mb-4">{title}</h2>
-    {children}
+    <h3 className="text-sm font-medium text-gray-500 mb-1">{title}</h3>
+    <div className={`text-2xl font-semibold ${colorClass}`}>
+      {isAmount && 'Rs. '}{value}
+      {secondaryValue && (
+        <div className="text-sm font-normal text-gray-500 mt-1">
+          {secondaryValue}
+        </div>
+      )}
+    </div>
   </motion.div>
 );
 
+const SectionHeader = ({ title }) => (
+  <motion.h2 
+    className="text-lg font-semibold text-gray-800 col-span-full mb-2 mt-6"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+  >
+    {title}
+  </motion.h2>
+);
+
 const Home = () => {
+  // State variables
   const [cashSales, setCashSales] = useState({ totalSales: 0, totalAmount: 0 });
   const [cardSales, setCardSales] = useState({ totalSales: 0, totalAmount: 0 });
   const [dailySales, setDailySales] = useState({ totalSales: 0, totalAmount: 0 });
@@ -41,7 +59,7 @@ const Home = () => {
   const [dailyNinja, setDailyNinja] = useState({ totalDeliveries: 0, totalAmount: 0 });
 
   useEffect(() => {
-    const fetchSalesAndExpenseData = async () => {
+    const fetchData = async () => {
       const year = new Date().getFullYear();
       const month = new Date().getMonth() + 1;
       const day = new Date().getDate();
@@ -74,6 +92,7 @@ const Home = () => {
 
         const data = await Promise.all(responses.map(res => res.ok ? res.json() : {}));
 
+        // Update state with fetched data
         setCashSales(data[0]);
         setCardSales(data[1]);
         setDailySales(data[2]);
@@ -84,48 +103,24 @@ const Home = () => {
         setDailyBrooze(data[7]);
         setMonthlyKpmg(data[8]);
         setDailyKpmg(data[9]);
-        setMonthlyDeliveries({
-          totalDeliveries: data[10]?.totalDeliveries || 0,
-          totalAmount: data[10]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyDeliveries(data[11]); // Daily Deliveries
-        setMonthlyHunger({
-          totalDeliveries: data[12]?.totalDeliveries || 0,
-          totalAmount: data[12]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyHunger(data[13]); // Daily Deliveries
-        setMonthlyNoon({
-          totalDeliveries: data[14]?.totalDeliveries || 0,
-          totalAmount: data[14]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyNoon(data[15]); // Daily Deliveries
-        setMonthlyJahez({
-          totalDeliveries: data[16]?.totalDeliveries || 0,
-          totalAmount: data[16]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyJahez(data[17]); // Daily Deliveries
-        setMonthlyMarsool({
-          totalDeliveries: data[18]?.totalDeliveries || 0,
-          totalAmount: data[18]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyMarsool(data[19]); // Daily Deliveries
-        setMonthlyNinja({
-          totalDeliveries: data[20]?.totalDeliveries || 0,
-          totalAmount: data[21]?.totalAmount || 0
-        });
-         // Monthly Deliveries
-        setDailyNinja(data[21]); // Daily Deliveries
+        setMonthlyDeliveries(data[10]);
+        setDailyDeliveries(data[11]);
+        setMonthlyHunger(data[12]);
+        setDailyHunger(data[13]);
+        setMonthlyNoon(data[14]);
+        setDailyNoon(data[15]);
+        setMonthlyJahez(data[16]);
+        setDailyJahez(data[17]);
+        setMonthlyMarsool(data[18]);
+        setDailyMarsool(data[19]);
+        setMonthlyNinja(data[20]);
+        setDailyNinja(data[21]);
 
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    fetchSalesAndExpenseData();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -134,128 +129,131 @@ const Home = () => {
   }, [cashSales, cardSales, dailySales, dailyCardSales, monthlyBrooze, dailyBrooze]);
 
   return (
-    <div className="min-h-screen bg-white text-black flex flex-col items-center p-8 font-poppins">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 sm:p-6 font-inter">
       <motion.h1 
-        className="text-5xl font-semibold mb-10 text-black"
+        className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
       >
-        Sales & Expense Overview
+        Business Performance Dashboard
       </motion.h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-7xl">
-        <Section title="Monthly Cash Sale">
-          <p className="text-2xl">Total Sales: {cashSales.totalSales}</p>
-          <p className="text-2xl">Total Amount: Rs.{cashSales.totalAmount}</p>
-        </Section>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full max-w-7xl">
+        
+        <SectionHeader title="Key Metrics" />
+        <StatCard
+          title="Monthly Net Sales"
+          value={netSalesMonthly}
+          isAmount
+          colorClass="text-blue-600"
+        />
+        <StatCard
+          title="Daily Net Sales"
+          value={netDailyTotal}
+          isAmount
+          colorClass="text-green-600"
+        />
 
-        <Section title="Today Cash Sale">
-          <p className="text-xl">Total Sales Today: {dailySales.totalSales}</p>
-          <p className="text-xl">Total Amount Today: Rs.{dailySales.totalAmount}</p>
-        </Section>
+        <SectionHeader title="Sales Breakdown" />
+        <StatCard title="Total Cash Sales" value={cashSales.totalAmount} isAmount />
+        <StatCard title="Total Card Sales" value={cardSales.totalAmount} isAmount />
+        <StatCard title="Today's Cash Sales" value={dailySales.totalAmount} isAmount />
+        <StatCard title="Today's Card Sales" value={dailyCardSales.totalAmount} isAmount />
 
-        <Section title="Monthly Card Sale">
-          <p className="text-2xl">Total Sales: {cardSales.totalSales}</p>
-          <p className="text-2xl">Total Amount: Rs.{cardSales.totalAmount}</p>
-        </Section>
+        <SectionHeader title="Expenses" />
+        <StatCard title="Monthly Expenses" value={monthlyExpense.totalAmount} isAmount colorClass="text-red-600" />
+        <StatCard title="Daily Expenses" value={dailyExpense.totalAmount} isAmount colorClass="text-red-600" />
 
-        <Section title="Today Card Sale">
-          <p className="text-2xl">Total Sales Today: {dailyCardSales.totalSales}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyCardSales.totalAmount}</p>
-        </Section>
+        <SectionHeader title="Corporate Accounts" />
+        <StatCard title="Brooze (Monthly)" value={monthlyBrooze.totalAmount} isAmount colorClass="text-purple-600" />
+        <StatCard title="Brooze (Daily)" value={dailyBrooze.totalAmount} isAmount colorClass="text-purple-600" />
+        <StatCard title="KPMG (Monthly)" value={monthlyKpmg.totalAmount} isAmount colorClass="text-teal-600" />
+        <StatCard title="KPMG (Daily)" value={dailyKpmg.totalAmount} isAmount colorClass="text-teal-600" />
 
-        <Section title="Total Net Sales (Monthly)">
-          <p className="text-3xl font-normal text-blue-500">Rs.{netSalesMonthly}</p>
-        </Section>
+        <SectionHeader title="Delivery Services" />
+        {/* Keeta */}
+        <StatCard 
+          title="Keeta (Monthly)" 
+          value={monthlyDeliveries.totalAmount} 
+          secondaryValue={`${monthlyDeliveries.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Keeta (Daily)" 
+          value={dailyDeliveries.totalAmount} 
+          secondaryValue={`${dailyDeliveries.totalDeliveries} orders`}
+          isAmount
+        />
 
-        <Section title="Total Net Sales (Daily)"> 
-          <p className="text-3xl font-normal text-blue-500">Rs.{netDailyTotal}</p>
-        </Section>
+        {/* Hunger Station */}
+        <StatCard 
+          title="Hunger Station (Monthly)" 
+          value={monthlyHunger.totalAmount} 
+          secondaryValue={`${monthlyHunger.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Hunger Station (Daily)" 
+          value={dailyHunger.totalAmount} 
+          secondaryValue={`${dailyHunger.totalDeliveries} orders`}
+          isAmount
+        />
 
-        <Section title="Monthly Expense">
-          <p className="text-2xl font-normal text-red-500">Rs.{monthlyExpense.totalAmount}</p>
-        </Section>
+        {/* Noon */}
+        <StatCard 
+          title="Noon (Monthly)" 
+          value={monthlyNoon.totalAmount} 
+          secondaryValue={`${monthlyNoon.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Noon (Daily)" 
+          value={dailyNoon.totalAmount} 
+          secondaryValue={`${dailyNoon.totalDeliveries} orders`}
+          isAmount
+        />
 
-        <Section title="Daily Expense">
-          <p className="text-2xl font-normal text-red-500">Rs.{dailyExpense.totalAmount}</p>
-        </Section>
+        {/* Jahez */}
+        <StatCard 
+          title="Jahez (Monthly)" 
+          value={monthlyJahez.totalAmount} 
+          secondaryValue={`${monthlyJahez.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Jahez (Daily)" 
+          value={dailyJahez.totalAmount} 
+          secondaryValue={`${dailyJahez.totalDeliveries} orders`}
+          isAmount
+        />
 
-        <Section title="Brooze Company Payments (Monthly)">
-          <p className="text-2xl font-normal text-green-500">Rs.{monthlyBrooze.totalAmount}</p>
-        </Section>
+        {/* Marsool */}
+        <StatCard 
+          title="Marsool (Monthly)" 
+          value={monthlyMarsool.totalAmount} 
+          secondaryValue={`${monthlyMarsool.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Marsool (Daily)" 
+          value={dailyMarsool.totalAmount} 
+          secondaryValue={`${dailyMarsool.totalDeliveries} orders`}
+          isAmount
+        />
 
-        <Section title="Brooze Company Payments (Today)">
-          <p className="text-2xl font-normal text-green-500">Rs.{dailyBrooze.totalAmount}</p>
-        </Section>
-
-        <Section title="KPMG Company Payments (Monthly)">
-          <p className="text-2xl font-normal text-green-500">Rs.{monthlyKpmg.totalAmount}</p>
-        </Section>
-
-        <Section title="KPMG Company Payments (Today)">
-          <p className="text-2xl font-normal text-green-500">Rs.{dailyKpmg.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Keeta Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyDeliveries.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyDeliveries.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Keeta Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyDeliveries.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyDeliveries.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Hunger Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyHunger.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyHunger.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Hunger Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyHunger.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyHunger.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Noon Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyNoon.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyNoon.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Noon Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyNoon.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyNoon.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Jahez Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyJahez.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyJahez.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Jahez Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyJahez.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyJahez.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Marsool Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyMarsool.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyMarsool.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Marsool Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyMarsool.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyMarsool.totalAmount}</p>
-        </Section>
-
-        <Section title="Monthly Ninja Deliveries">
-          <p className="text-2xl">Total Deliveries: {monthlyNinja.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount: Rs.{monthlyNinja.totalAmount}</p>
-        </Section>
-
-        <Section title="Today's Ninja Deliveries">
-          <p className="text-2xl">Total Deliveries Today: {dailyNinja.totalDeliveries}</p>
-          <p className="text-2xl">Total Amount Today: Rs.{dailyNinja.totalAmount}</p>
-        </Section>
+        {/* Ninja */}
+        <StatCard 
+          title="Ninja (Monthly)" 
+          value={monthlyNinja.totalAmount} 
+          secondaryValue={`${monthlyNinja.totalDeliveries} orders`}
+          isAmount
+        />
+        <StatCard 
+          title="Ninja (Daily)" 
+          value={dailyNinja.totalAmount} 
+          secondaryValue={`${dailyNinja.totalDeliveries} orders`}
+          isAmount
+        />
       </div>
     </div>
   );
