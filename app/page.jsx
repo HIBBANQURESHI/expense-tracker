@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+
+
 const StatCard = ({ title, value, secondaryValue, isAmount = false, colorClass = "text-gray-900" }) => (
   <motion.div 
     className="w-full p-5 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
@@ -31,6 +33,92 @@ const SectionHeader = ({ title }) => (
   </motion.h2>
 );
 
+// Add filter buttons component
+const FilterButton = ({ active, onClick, children }) => (
+  <motion.button
+    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+      active ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+    }`}
+    onClick={onClick}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    {children}
+  </motion.button>
+);
+
+const LoanTable = ({ loans, title }) => {
+  const [filter, setFilter] = useState("monthly");
+  const currentDate = new Date();
+
+  // Remove duplicate loans based on _id
+  const uniqueLoans = Array.from(new Map(loans.map(loan => [loan._id, loan])).values());
+
+  // Filter loans based on selection (monthly or today)
+  const filteredLoans = filter === "monthly" 
+    ? uniqueLoans 
+    : uniqueLoans.filter(loan => 
+        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+      );
+
+  return (
+    <div className="col-span-full bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <div className="flex gap-2">
+          <FilterButton active={filter === "monthly"} onClick={() => setFilter("monthly")}>
+            Monthly
+          </FilterButton>
+          <FilterButton active={filter === "today"} onClick={() => setFilter("today")}>
+            Today
+          </FilterButton>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr className="text-left text-sm font-medium text-gray-600">
+              <th className="p-3 min-w-[160px]">Name</th>
+              <th className="p-3 min-w-[120px]">Date</th>
+              <th className="p-3 min-w-[140px]">Received</th>
+              <th className="p-3 min-w-[140px]">Remaining</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {filteredLoans.length > 0 ? (
+              filteredLoans.map((loan) => (
+                <tr key={loan._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-3 text-sm text-gray-900 font-medium">
+                    {loan.name || "N/A"}
+                  </td>
+                  <td className="p-3 text-sm text-gray-600">
+                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-green-700">
+                    Rs. {(loan.received || 0).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-red-700">
+                    Rs. {(loan.remaining || 0).toLocaleString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-gray-500 text-sm">
+                  No loans recorded
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+
+
 const Home = () => {
   // State variables
   const [cashSales, setCashSales] = useState({ totalSales: 0, totalAmount: 0 });
@@ -57,6 +145,8 @@ const Home = () => {
   const [dailyMarsool, setDailyMarsool] = useState({ totalDeliveries: 0, totalAmount: 0 });
   const [monthlyNinja, setMonthlyNinja] = useState({ totalDeliveries: 0, totalAmount: 0 });
   const [dailyNinja, setDailyNinja] = useState({ totalDeliveries: 0, totalAmount: 0 });
+  const [monthlyLoan, setMonthlyLoan] = useState([]);
+  const [dailyLoan, setDailyLoan] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +178,8 @@ const Home = () => {
           fetch(`http://localhost:4000/api/marsool/${year}/${month}/${day}`),
           fetch(`http://localhost:4000/api/ninja/${year}/${month}`), 
           fetch(`http://localhost:4000/api/ninja/${year}/${month}/${day}`),
+          fetch(`http://localhost:4000/api/loan/${year}/${month}`),
+          fetch(`http://localhost:4000/api/loan/${year}/${month}/${day}`)
         ]);
 
         const data = await Promise.all(responses.map(res => res.ok ? res.json() : {}));
@@ -115,6 +207,8 @@ const Home = () => {
         setDailyMarsool(data[19]);
         setMonthlyNinja(data[20]);
         setDailyNinja(data[21]);
+        setMonthlyLoan(data[22]);
+        setDailyLoan(data[23]);
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -254,6 +348,14 @@ const Home = () => {
           secondaryValue={`${dailyNinja.totalDeliveries} orders`}
           isAmount
         />
+
+        <div className="col-span-full">
+          <SectionHeader title="Loan Management" />
+          <LoanTable 
+            loans={[...monthlyLoan, ...dailyLoan]} 
+            title="Loan Transactions Overview"
+          />
+        </div>
       </div>
     </div>
   );

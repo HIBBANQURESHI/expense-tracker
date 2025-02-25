@@ -12,7 +12,7 @@ import {
   MdMenu, 
   MdMoney,
 } from 'react-icons/md';
-import { GrDeliver } from "react-icons/gr";
+import { GrDeliver, GrMoney } from "react-icons/gr";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
@@ -25,7 +25,9 @@ const Sidebar = () => {
     { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
     { title: 'Brooze Company', icon: <MdBusiness />, path: '/Brooze' },
     { title: 'KPMG Company', icon: <MdBusiness />, path: '/Kpmg' },
-    { title: 'Loan', icon: <MdAccountBalance />, path: '/loan' },
+    { title: 'Loan', icon: <MdAccountBalance />, path: '/Loan' },
+    { title: 'Receiving', icon: <GrMoney />, path: '/Receiving' },
+
   ];
 
   const Deliveries = [
