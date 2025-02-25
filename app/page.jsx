@@ -81,6 +81,7 @@ const LoanTable = ({ loans, title }) => {
             <tr className="text-left text-sm font-medium text-gray-600">
               <th className="p-3 min-w-[160px]">Name</th>
               <th className="p-3 min-w-[120px]">Date</th>
+              <th className="p-3 min-w-[140px]">Amount</th>
               <th className="p-3 min-w-[140px]">Received</th>
               <th className="p-3 min-w-[140px]">Remaining</th>
             </tr>
@@ -94,6 +95,9 @@ const LoanTable = ({ loans, title }) => {
                   </td>
                   <td className="p-3 text-sm text-gray-600">
                     {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-sky-600">
+                    Rs. {(loan.amount || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
                     Rs. {(loan.received || 0).toLocaleString()}
