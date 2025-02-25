@@ -12,6 +12,7 @@ import {
   MdMenu, 
   MdMoney,
 } from 'react-icons/md';
+import { GrDeliver } from "react-icons/gr";
 
 
 const Sidebar = () => {
@@ -22,9 +23,15 @@ const Sidebar = () => {
     { title: 'Expense', icon: <MdMoney />, path: '/Expense' },
     { title: 'Cash Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
     { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
-    { title: 'Brooze Company', icon: <MdBusiness />, path: '/BruceCompany' },
-    { title: 'KPMG Company', icon: <MdBusiness />, path: '/KPMGCompany' },
+    { title: 'Brooze Company', icon: <MdBusiness />, path: '/Brooze' },
+    { title: 'KPMG Company', icon: <MdBusiness />, path: '/Kpmg' },
     { title: 'Loan', icon: <MdAccountBalance />, path: '/loan' },
+    { title: 'Keeta Delivery', icon: <GrDeliver />, path: '/Keeta' },
+    { title: 'Hunger Delivery', icon: <GrDeliver />, path: '/Hunger' },
+    { title: 'Noon Delivery', icon: <GrDeliver />, path: '/Noon' },
+    { title: 'Jahez Delivery', icon: <GrDeliver />, path: '/Jahez' },
+    { title: 'Marsool Delivery', icon: <GrDeliver />, path: '/Marsool' },
+    { title: 'Ninja Delivery', icon: <GrDeliver />, path: '/Ninja' },
   ];
 
   return (
