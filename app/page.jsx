@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 
 
@@ -189,7 +191,6 @@ const ReceivingTable = ({ loans, title }) => {
   );
 };
 
-
 const Home = () => {
   // State variables
   const [cashSales, setCashSales] = useState({ totalSales: 0, totalAmount: 0 });
@@ -299,6 +300,23 @@ const Home = () => {
     setNetDailyTotal(dailySales.totalAmount + dailyCardSales.totalAmount + dailyBrooze.totalAmount);
   }, [cashSales, cardSales, dailySales, dailyCardSales, monthlyBrooze, dailyBrooze]);
 
+  const pdfRef = useRef();
+
+  //PDF Download
+const generatePDF = () => {
+  const input = pdfRef.current;
+  html2canvas(input, { scale: 2 }).then((canvas) => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 190;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+    pdf.save("Financial_Report.pdf");
+  });
+}
+
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 sm:p-6 font-inter">
       <motion.h1 
@@ -308,8 +326,17 @@ const Home = () => {
       >
         Business Performance Dashboard
       </motion.h1>
+      {/* Download PDF Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={generatePDF}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        >
+          Download PDF
+        </button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full max-w-7xl">
+      <div ref={pdfRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full max-w-7xl">
         
         <SectionHeader title="Key Metrics" />
         <StatCard
