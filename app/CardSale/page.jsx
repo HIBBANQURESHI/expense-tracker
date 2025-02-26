@@ -50,32 +50,37 @@ const CardSale = () => {
 
   return (
     <motion.div 
-      className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center" 
+      className="min-h-screen bg-white text-black p-6 flex flex-col items-center" 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
       transition={{ duration: 0.5 }}>
       <h1 className="text-4xl font-bold mb-6">Sales By Card</h1>
 
-      <div className="flex gap-4 mb-6 w-full max-w-4xl">
+      <div className="flex flex-col md:flex-row gap-4 mb-6 w-full max-w-4xl items-center">
         <input
           type="text"
           placeholder="Search by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-1/2 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none"
+          className="w-full md:w-1/2 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
           placeholderText="Select a date"
         />
+        <Link href="/CreateCardSale">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition-colors shadow-sm">
+            + New Sale
+          </button>
+        </Link>
       </div>
 
-      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-gray-800">
-        <table className="min-w-full leading-normal">
+      <div className="overflow-x-auto w-full max-w-4xl">
+        <table className="w-full  border border-gray-300">
           <thead>
-            <tr className="bg-gray-700 text-white">
+            <tr className="bg-gray-200 text-black">
               <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Description</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
@@ -86,16 +91,16 @@ const CardSale = () => {
           <tbody>
             {filteredSales.length > 0 ? (
               filteredSales.map((sale) => (
-                <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-600 transition">
+                <tr key={sale._id} className="border-b border-gray-300 hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{sale.name}</td>
                   <td className="px-5 py-4 text-sm">{sale.description}</td>
-                  <td className="px-5 py-4 text-sm text-green-400">${sale.amount}</td>
+                  <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
                   <td className="px-5 py-4 text-sm">{new Date(sale.createdAt).toDateString()}</td>
-                  <td className="px-5 py-4 text-sm">
+                  <td className="px-5 py-4 text-sm  flex gap-2">
                     <Link href={`/UpdateCardSale/${sale._id}`}>
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
+                      <button className="text-blue-500 py-1 px-3 rounded-lg transition-all">Edit</button>
                     </Link>
-                    <button onClick={() => handleDelete(sale._id)} className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition-all">Delete</button>
+                    <button onClick={() => handleDelete(sale._id)} className="text-red-500 py-1 px-3 rounded-lg transition-all">Delete</button>
                   </td>
                 </tr>
               ))
@@ -107,12 +112,6 @@ const CardSale = () => {
           </tbody>
         </table>
       </div>
-
-      <Link href="/CreateCardSale">
-        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-          Create Sale
-        </button>
-      </Link>
     </motion.div>
   );
 };

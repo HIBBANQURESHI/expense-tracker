@@ -50,7 +50,7 @@ const LoanList = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center"
+      className="min-h-screen bg-white text-black p-6 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -63,20 +63,27 @@ const LoanList = () => {
           placeholder="Search by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none"
+          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
           placeholderText="Select a date"
         />
       </div>
+      
 
-      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-gray-800">
+      <Link href="/CreateLoan">
+        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
+          Create Loan
+        </button>
+      </Link>
+
+      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white py-3">
         <table className="min-w-full leading-normal">
           <thead>
-            <tr className="bg-gray-700 text-white">
+            <tr className="bg-gray-100 text-black">
               <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Received</th>
@@ -88,7 +95,7 @@ const LoanList = () => {
           <tbody>
             {filteredLoans.length > 0 ? (
               filteredLoans.map((loan) => (
-                <tr key={loan._id} className="border-b border-gray-700 hover:bg-gray-600 transition">
+                <tr key={loan._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{loan.name}</td>
                   <td className="px-5 py-4 text-sm text-green-400">${loan.amount}</td>
                   <td className="px-5 py-4 text-sm text-blue-400">${loan.received}</td>
@@ -96,9 +103,9 @@ const LoanList = () => {
                   <td className="px-5 py-4 text-sm">{new Date(loan.createdAt).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateLoan/${loan._id}`}>
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
+                      <button className="text-blue-600 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
                     </Link>
-                    <button onClick={() => handleDelete(loan._id)} className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition-all">Delete</button>
+                    <button onClick={() => handleDelete(loan._id)} className="text-red-500 py-1 px-3 rounded-lg transition-all">Delete</button>
                   </td>
                 </tr>
               ))
@@ -110,12 +117,6 @@ const LoanList = () => {
           </tbody>
         </table>
       </div>
-
-      <Link href="/CreateLoan">
-        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-          Create Loan
-        </button>
-      </Link>
     </motion.div>
   );
 };
