@@ -20,7 +20,7 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/sales/${id}`);
+      const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${id}`);
       if (response.data) {
         setSale(response.data);
       }
@@ -38,7 +38,7 @@ const UpdateSale = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:4000/api/sales/${id}`, sale);
+      await axios.put(`https://akc-expense-server.vercel.app/api/sales/${id}`, sale);
       toast.success('Sale updated successfully');
       router.push('/SaleByCash');
     } catch (error) {

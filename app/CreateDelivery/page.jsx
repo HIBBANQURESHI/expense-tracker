@@ -37,7 +37,7 @@ const CreateExpense = () => {
     console.log("Data before sending:", sale); // Debugging
 
     try {
-      await axios.post('http://localhost:4000/api/keeta', sale);
+      await axios.post('https://akc-expense-server.vercel.app/api/keeta', sale);
       toast.success('Delivery created successfully!');
       router.push('/Keeta');
     } catch (error) {

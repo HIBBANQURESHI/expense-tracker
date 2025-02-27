@@ -24,7 +24,7 @@ const SaleByCash = () => {
   const fetchSales = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:4000/api/sales');
+      const response = await axios.get('https://akc-expense-server.vercel.app/api/sales');
       if (response.data) {
         setSales(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       }
@@ -39,7 +39,7 @@ const SaleByCash = () => {
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete the sale for ${name}?`)) {
       try {
-        await axios.delete(`http://localhost:4000/api/sales/${id}`);
+        await axios.delete(`https://akc-expense-server.vercel.app/api/sales/${id}`);
         toast.success('Sale deleted successfully');
         fetchSales();
       } catch (error) {

@@ -24,7 +24,7 @@ const CreateExpense = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/brooze', sale);
+      const response = await axios.post('https://akc-expense-server.vercel.app/api/brooze', sale);
         toast.success('Expense created successfully!');
         router.push('/Brooze');
     } catch (error) {

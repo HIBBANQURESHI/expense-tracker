@@ -24,7 +24,7 @@ const CreateExpense = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/kpmg', sale);
+      const response = await axios.post('https://akc-expense-server.vercel.app/api/kpmg', sale);
         toast.success('Expense created successfully!');
         router.push('/Kpmg');
     } catch (error) {

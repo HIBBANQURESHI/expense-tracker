@@ -24,7 +24,7 @@ const Expense = () => {
 
   const fetchSales = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/brooze");
+      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze");
       if (response.data) {
         setSales(
           response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -37,7 +37,7 @@ const Expense = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/brooze/${id}`);
+      await axios.delete(`https://akc-expense-server.vercel.app/api/brooze/${id}`);
       toast.success("Sale deleted successfully");
       fetchSales();
     } catch (error) {

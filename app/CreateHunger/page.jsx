@@ -37,7 +37,7 @@ const CreateExpense = () => {
     console.log("Data before sending:", sale); // Debugging
 
     try {
-      await axios.post('http://localhost:4000/api/hunger', sale);
+      await axios.post('https://akc-expense-server.vercel.app/api/hunger', sale);
       toast.success('Delivery created successfully!');
       router.push('/Hunger');
     } catch (error) {
