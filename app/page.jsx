@@ -123,6 +123,155 @@ const LoanTable = ({ loans, title }) => {
   );
 };
 
+//BroozeTable
+const BroozeTable = ({ loans, title }) => {
+  const [filter, setFilter] = useState("monthly");
+  const currentDate = new Date();
+
+  // Remove duplicate loans based on _id
+  const uniqueLoans = Array.from(new Map(loans.map(loan => [loan._id, loan])).values());
+
+  // Filter loans based on selection (monthly or today)
+  const filteredLoans = filter === "monthly" 
+    ? uniqueLoans 
+    : uniqueLoans.filter(loan => 
+        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+      );
+
+  return (
+    <div className="col-span-full bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <div className="flex gap-2">
+          <FilterButton active={filter === "monthly"} onClick={() => setFilter("monthly")}>
+            Monthly
+          </FilterButton>
+          <FilterButton active={filter === "today"} onClick={() => setFilter("today")}>
+            Today
+          </FilterButton>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr className="text-left text-sm font-medium text-gray-600">
+              <th className="p-3 min-w-[160px]">Name</th>
+              <th className="p-3 min-w-[120px]">Date</th>
+              <th className="p-3 min-w-[140px]">Amount</th>
+              <th className="p-3 min-w-[140px]">Credit</th>
+              <th className="p-3 min-w-[140px]">Balance</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {filteredLoans.length > 0 ? (
+              filteredLoans.map((loan) => (
+                <tr key={loan._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-3 text-sm text-gray-900 font-medium">
+                    {loan.name || "N/A"}
+                  </td>
+                  <td className="p-3 text-sm text-gray-600">
+                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-sky-600">
+                    Rs. {(loan.amount || 0).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-green-700">
+                    Rs. {(loan.credit || 0).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-red-700">
+                    Rs. {(loan.balance || 0).toLocaleString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-gray-500 text-sm">
+                  No recorded
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+//KPMGTable
+const KPMGTable = ({ loans, title }) => {
+  const [filter, setFilter] = useState("monthly");
+  const currentDate = new Date();
+
+  // Remove duplicate loans based on _id
+  const uniqueLoans = Array.from(new Map(loans.map(loan => [loan._id, loan])).values());
+
+  // Filter loans based on selection (monthly or today)
+  const filteredLoans = filter === "monthly" 
+    ? uniqueLoans 
+    : uniqueLoans.filter(loan => 
+        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+      );
+
+  return (
+    <div className="col-span-full bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <div className="flex gap-2">
+          <FilterButton active={filter === "monthly"} onClick={() => setFilter("monthly")}>
+            Monthly
+          </FilterButton>
+          <FilterButton active={filter === "today"} onClick={() => setFilter("today")}>
+            Today
+          </FilterButton>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr className="text-left text-sm font-medium text-gray-600">
+              <th className="p-3 min-w-[160px]">Name</th>
+              <th className="p-3 min-w-[120px]">Date</th>
+              <th className="p-3 min-w-[140px]">Amount</th>
+              <th className="p-3 min-w-[140px]">Credit</th>
+              <th className="p-3 min-w-[140px]">Balance</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {filteredLoans.length > 0 ? (
+              filteredLoans.map((loan) => (
+                <tr key={loan._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-3 text-sm text-gray-900 font-medium">
+                    {loan.name || "N/A"}
+                  </td>
+                  <td className="p-3 text-sm text-gray-600">
+                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-sky-600">
+                    Rs. {(loan.amount || 0).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-green-700">
+                    Rs. {(loan.credit || 0).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-sm font-medium text-red-700">
+                    Rs. {(loan.balance || 0).toLocaleString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-gray-500 text-sm">
+                  No recorded
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
 // For Receiving
 const ReceivingTable = ({ loans, title }) => {
@@ -199,10 +348,10 @@ const Home = () => {
   const [dailyCardSales, setDailyCardSales] = useState({ totalSales: 0, totalAmount: 0 });
   const [monthlyExpense, setMonthlyExpense] = useState({ totalAmount: 0 });
   const [dailyExpense, setDailyExpense] = useState({ totalAmount: 0 });
-  const [monthlyBrooze, setMonthlyBrooze] = useState({ totalAmount: 0 });
-  const [dailyBrooze, setDailyBrooze] = useState({ totalAmount: 0 });
-  const [monthlyKpmg, setMonthlyKpmg] = useState({ totalAmount: 0 });
-  const [dailyKpmg, setDailyKpmg] = useState({ totalAmount: 0 });
+  const [monthlyBrooze, setMonthlyBrooze] = useState([]);
+  const [dailyBrooze, setDailyBrooze] = useState([]);
+  const [monthlyKpmg, setMonthlyKpmg] = useState([]);
+  const [dailyKpmg, setDailyKpmg] = useState([]);
   const [netSalesMonthly, setNetSalesMonthly] = useState(0);
   const [netDailyTotal, setNetDailyTotal] = useState(0);
   const [monthlyDeliveries, setMonthlyDeliveries] = useState({ totalDeliveries: 0, totalAmount: 0 });
@@ -234,7 +383,7 @@ const Home = () => {
           fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/expense/${year}/${month}`),
+          fetch(`https://akc-expense-server.vercel.app/api/expense/${year}/${month}`), 
           fetch(`https://akc-expense-server.vercel.app/api/expense/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}/${day}`),
@@ -294,12 +443,20 @@ const Home = () => {
     };
     fetchData();
   }, []);
+// In your useEffect for net sales calculations
+useEffect(() => {
+  const cash = cashSales.totalAmount || 0;
+  const card = cardSales.totalAmount || 0;
+  const broozeTotal = monthlyBrooze.reduce((acc, loan) => acc + (loan?.amount || 0), 0);
+  setNetSalesMonthly(cash + card + broozeTotal);
+}, [cashSales, cardSales, monthlyBrooze]);
 
-  useEffect(() => {
-    setNetSalesMonthly(cashSales.totalAmount + cardSales.totalAmount + monthlyBrooze.totalAmount);
-    setNetDailyTotal(dailySales.totalAmount + dailyCardSales.totalAmount + dailyBrooze.totalAmount);
-  }, [cashSales, cardSales, dailySales, dailyCardSales, monthlyBrooze, dailyBrooze]);
-
+useEffect(() => {
+  const dailyCash = dailySales.totalAmount || 0;
+  const dailyCard = dailyCardSales.totalAmount || 0;
+  const dailyBroozeTotal = dailyBrooze.reduce((acc, loan) => acc + (loan?.amount || 0), 0);
+  setNetDailyTotal(dailyCash + dailyCard + dailyBroozeTotal);
+}, [dailySales, dailyCardSales, dailyBrooze]);
   const pdfRef = useRef();
 
   //PDF Download
@@ -359,14 +516,26 @@ const generatePDF = () => {
         <StatCard title="Today's Card Sales" value={dailyCardSales.totalAmount} isAmount />
 
         <SectionHeader title="Expenses" />
-        <StatCard title="Monthly Expenses" value={monthlyExpense.totalAmount} isAmount colorClass="text-red-600" />
+        <StatCard title="Monthly Expenses" value={monthlyExpense.totalAmount || 0} isAmount colorClass="text-red-600" />
         <StatCard title="Daily Expenses" value={dailyExpense.totalAmount} isAmount colorClass="text-red-600" />
 
-        <SectionHeader title="Corporate Accounts" />
-        <StatCard title="Brooze (Monthly)" value={monthlyBrooze.totalAmount} isAmount colorClass="text-purple-600" />
-        <StatCard title="Brooze (Daily)" value={dailyBrooze.totalAmount} isAmount colorClass="text-purple-600" />
-        <StatCard title="KPMG (Monthly)" value={monthlyKpmg.totalAmount} isAmount colorClass="text-teal-600" />
-        <StatCard title="KPMG (Daily)" value={dailyKpmg.totalAmount} isAmount colorClass="text-teal-600" />
+        
+
+        <div className="col-span-full">
+          <SectionHeader title="Brooze Company" />
+          <BroozeTable 
+            loans={[...monthlyBrooze, ...dailyBrooze]} 
+            title="Transactions Overview"
+          />
+        </div>
+
+        <div className="col-span-full">
+          <SectionHeader title="KPMG Company" />
+          <KPMGTable 
+            loans={[...monthlyKpmg, ...dailyKpmg]} 
+            title="Transactions Overview"
+          />
+        </div>
 
         <SectionHeader title="Delivery Services" />
         {/* Keeta */}

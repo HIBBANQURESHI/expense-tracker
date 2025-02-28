@@ -12,49 +12,41 @@ import Link from "next/link";
 const DatePicker = dynamic(() => import("react-datepicker"), { ssr: false });
 import "react-datepicker/dist/react-datepicker.css";
 
-const Expense = () => {
-  const [sales, setSales] = useState([]);
+const LoanList = () => {
+  const [loans, setLoans] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [paymentFilter, setPaymentFilter] = useState(""); // New state for filter
 
   useEffect(() => {
-    fetchSales();
+    fetchLoans();
   }, []);
 
-  const fetchSales = async () => {
+  const fetchLoans = async () => {
     try {
       const response = await axios.get("https://akc-expense-server.vercel.app/api/kpmg");
+      console.log("API Response:", response.data); 
       if (response.data) {
-        setSales(
-          response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        );
+        setLoans(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       }
     } catch (error) {
-      console.error("Error fetching sales:", error);
+      console.error("Error fetching loans:", error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://akc-expense-server.vercel.app/api/kpmg/${id}`);
-      toast.success("Sale deleted successfully");
-      fetchSales();
+      toast.success("Loan deleted successfully");
+      fetchLoans();
     } catch (error) {
-      toast.error("Error deleting sale");
+      toast.error("Error deleting loan");
     }
   };
 
-  const filteredSales = sales.filter((sale) => {
-    const matchesDate = selectedDate
-      ? new Date(sale.createdAt).toDateString() === new Date(selectedDate).toDateString()
-      : true;
-    const matchesPayment =
-      paymentFilter === ""
-        ? true
-        : sale.description.toLowerCase().includes(paymentFilter.toLowerCase());
-
-    return matchesDate && matchesPayment;
+  const filteredLoans = loans.filter((loan) => {
+    const matchesSearch = loan.name.toLowerCase().includes(search.toLowerCase());
+    const matchesDate = selectedDate ? new Date(loan.createdAt).toDateString() === new Date(selectedDate).toDateString() : true;
+    return matchesSearch && matchesDate;
   });
 
   return (
@@ -66,80 +58,61 @@ const Expense = () => {
     >
       <h1 className="text-4xl font-bold mb-6">KPMG Company</h1>
 
-      <div className="flex flex-wrap gap-4 mb-6 w-full max-w-4xl">
-        {/* Search Input */}
+      <div className="flex gap-4 mb-6 w-full max-w-4xl">
         <input
           type="text"
           placeholder="Search by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/3 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-
-        {/* Date Picker */}
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          className="w-full md:w-1/3 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
+          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
           placeholderText="Select a date"
         />
+      </div>
+      
 
-        {/* Payment Type Filter */}
-        <select
-          value={paymentFilter}
-          onChange={(e) => setPaymentFilter(e.target.value)}
-          className="w-full md:w-1/3 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Payments</option>
-          <option value="cash">Cash</option>
-          <option value="card">Card</option>
-        </select>
-        
-      <Link href="/CreateKpmg">
+      <Link href="/CreateBrooze">
         <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-           + Create
+          Create New
         </button>
       </Link>
-      </div>
 
-      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white">
+      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white py-3">
         <table className="min-w-full leading-normal">
           <thead>
             <tr className="bg-gray-100 text-black">
-              <th className="px-5 py-3 text-left text-sm font-semibold">Description</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Credit</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Balance</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Created At</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredSales.length > 0 ? (
-              filteredSales.map((sale) => (
-                <tr key={sale._id} className="border-b border-black hover:bg-gray-100 transition">
-
-                  <td className="px-5 py-4 text-sm">{sale.description}</td>
-                  <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(sale.createdAt).toDateString()}</td>
+            {filteredLoans.length > 0 ? (
+              filteredLoans.map((loan) => (
+                <tr key={loan._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
+                  <td className="px-5 py-4 text-sm">{loan.name}</td>
+                  <td className="px-5 py-4 text-sm text-green-400">${loan.amount}</td>
+                  <td className="px-5 py-4 text-sm text-blue-400">${loan.credit}</td>
+                  <td className="px-5 py-4 text-sm text-red-400">${loan.balance}</td>
+                  <td className="px-5 py-4 text-sm">{new Date(loan.createdAt).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
-                    <Link href={`/UpdateKpmg/${sale._id}`}>
-                      <button className="text-blue-500 py-1 px-3 rounded-lg mr-2 transition-all">
-                        Edit
-                      </button>
+                    <Link href={`/UpdateBrooze/${loan._id}`}>
+                      <button className="text-blue-600 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
                     </Link>
-                    <button
-                      onClick={() => handleDelete(sale._id)}
-                      className="text-red-500 py-1 px-3 rounded-lg transition-all"
-                    >
-                      Delete
-                    </button>
+                    <button onClick={() => handleDelete(loan._id)} className="text-red-500 py-1 px-3 rounded-lg transition-all">Delete</button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="px-5 py-4 text-center text-gray-400">
-                  No Expense found.
-                </td>
+                <td colSpan="6" className="px-5 py-4 text-center text-gray-400">No Record found.</td>
               </tr>
             )}
           </tbody>
@@ -149,4 +122,4 @@ const Expense = () => {
   );
 };
 
-export default Expense;
+export default LoanList;

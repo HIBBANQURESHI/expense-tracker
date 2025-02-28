@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const CreateExpense = () => {
-  const [sale, setSale] = useState({
-    description: '',
-    amount: ''
+const CreateLoan = () => {
+  const [loan, setLoan] = useState({
+    name: '',
+    amount: '',
+    credit: '',
+    balance: 0, // Ensure balance has a default value
   });
 
   const router = useRouter();
@@ -17,40 +19,59 @@ const CreateExpense = () => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSale({ ...sale, [name]: value });
+    let newLoan = { ...loan, [name]: value };
+  
+    if (name === 'amount' || name === 'credit') {
+      const amount = parseFloat(newLoan.amount) || 0;
+      const received = parseFloat(newLoan.credit) || 0;
+  
+      if (received > amount) {
+        toast.error('Received amount cannot exceed total loan amount');
+        return;
+      }
+
+      newLoan.balance = amount - received; // Set balance correctly
+    }
+  
+    setLoan(newLoan);
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log("Sending Data:", loan); // Debugging
+    
     try {
-      const response = await axios.post('https://akc-expense-server.vercel.app/api/kpmg', sale);
-        toast.success('Expense created successfully!');
-        router.push('/Kpmg');
+      const response = await axios.post("https://akc-expense-server.vercel.app/api/kpmg", loan, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      toast.success("Loan added successfully!");
+      router.push("/Brooze");
     } catch (error) {
-          console.error('Error Creating Expense:', error);
-          toast.error('Error Creating Expense');
-        }
+      console.error("Error adding loan:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Error adding loan");
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <div className="w-full max-w-lg bg-gray-800/60 p-8 rounded-lg">
-        <h2 className="text-2xl font-bold text-white text-center">KPMG Company</h2>
+        <h2 className="text-2xl font-bold text-white text-center">Add</h2>
         <form onSubmit={handleSubmit} className="mt-6">
-            
-          {/* Description */}
-          <div className="mt-4">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-300">
-              Description
+          {/* Name */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300">
+              Name
             </label>
-            <textarea
-              name="description"
-              value={sale.description}
+            <input
+              type="text"
+              name="name"
+              value={loan.name}
               onChange={handleChange}
-              placeholder="Enter description"
+              placeholder="Enter name"
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-              rows="4"
               required
             />
           </div>
@@ -63,11 +84,42 @@ const CreateExpense = () => {
             <input
               type="number"
               name="amount"
-              value={sale.amount}
+              value={loan.amount}
               onChange={handleChange}
               placeholder="Enter amount"
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               required
+            />
+          </div>
+
+          {/* Received Amount */}
+          <div className="mt-4">
+            <label htmlFor="credit" className="block text-sm font-medium text-gray-300">
+              Credit
+            </label>
+            <input
+              type="number"
+              name="credit"
+              value={loan.credit}
+              onChange={handleChange}
+              placeholder="Enter credit amount"
+              className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              required
+            />
+          </div>
+
+          {/* Remaining Balance (Auto-calculated) */}
+          <div className="mt-4">
+            <label htmlFor="balance" className="block text-sm font-medium text-gray-300">
+              Balance
+            </label>
+            <input
+              type="number"
+              name="balance"
+              value={loan.balance} // Use balance correctly
+              placeholder="Auto-calculated balance"
+              readOnly
+              className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
             />
           </div>
 
@@ -76,7 +128,7 @@ const CreateExpense = () => {
             type="submit"
             className="w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition duration-300"
           >
-            Add Expense
+            Add Loan
           </button>
         </form>
       </div>
@@ -84,4 +136,4 @@ const CreateExpense = () => {
   );
 };
 
-export default CreateExpense;
+export default CreateLoan;
