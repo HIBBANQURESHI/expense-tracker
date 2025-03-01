@@ -99,13 +99,13 @@ const LoanTable = ({ loans, title }) => {
                     {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
                   </td>
                   <td className="p-3 text-sm font-medium text-sky-600">
-                    Rs. {(loan.amount || 0).toLocaleString()}
+                    SAR. {(loan.amount || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
-                    Rs. {(loan.received || 0).toLocaleString()}
+                  SAR. {(loan.received || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-red-700">
-                    Rs. {(loan.remaining || 0).toLocaleString()}
+                  SAR. {(loan.remaining || 0).toLocaleString()}
                   </td>
                 </tr>
               ))
@@ -174,13 +174,13 @@ const BroozeTable = ({ loans, title }) => {
                     {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
                   </td>
                   <td className="p-3 text-sm font-medium text-sky-600">
-                    Rs. {(loan.amount || 0).toLocaleString()}
+                  SAR. {(loan.amount || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
-                    Rs. {(loan.credit || 0).toLocaleString()}
+                  SAR. {(loan.credit || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-red-700">
-                    Rs. {(loan.balance || 0).toLocaleString()}
+                  SAR. {(loan.balance || 0).toLocaleString()}
                   </td>
                 </tr>
               ))
@@ -249,13 +249,13 @@ const KPMGTable = ({ loans, title }) => {
                     {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
                   </td>
                   <td className="p-3 text-sm font-medium text-sky-600">
-                    Rs. {(loan.amount || 0).toLocaleString()}
+                  SAR. {(loan.amount || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
-                    Rs. {(loan.credit || 0).toLocaleString()}
+                  SAR. {(loan.credit || 0).toLocaleString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-red-700">
-                    Rs. {(loan.balance || 0).toLocaleString()}
+                  SAR. {(loan.balance || 0).toLocaleString()}
                   </td>
                 </tr>
               ))
@@ -322,7 +322,7 @@ const ReceivingTable = ({ loans, title }) => {
                     {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
-                    Rs. {(loan.amount || 0).toLocaleString()}
+                  SAR. {(loan.amount || 0).toLocaleString()}
                   </td>
                 </tr>
               ))
