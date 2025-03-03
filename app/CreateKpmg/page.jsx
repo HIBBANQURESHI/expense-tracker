@@ -130,7 +130,7 @@ const CreateLoan = () => {
             <input
               type="date"
               name="date"
-              value={sale.date}
+              value={loan.date}
               onChange={handleChange}
               className="mt-1 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
