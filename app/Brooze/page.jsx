@@ -23,7 +23,7 @@ const LoanList = () => {
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/brooze");
+      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze");
       console.log("API Response:", response.data); 
       if (response.data) {
         setLoans(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -35,7 +35,7 @@ const LoanList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/brooze/${id}`);
+      await axios.delete(`https://akc-expense-server.vercel.app/api/brooze/${id}`);
       toast.success("Loan deleted successfully");
       fetchLoans();
     } catch (error) {

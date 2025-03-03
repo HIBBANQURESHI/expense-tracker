@@ -49,7 +49,7 @@ const CreateLoan = () => {
     console.log('Sending Data:', loan); // Debugging
 
     try {
-      await axios.post("http://localhost:4000/api/brooze", loan, {
+      await axios.post("https://akc-expense-server.vercel.app/api/brooze", loan, {
         headers: { "Content-Type": "application/json" },
       });
 
