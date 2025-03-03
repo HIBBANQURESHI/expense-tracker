@@ -1,7 +1,6 @@
 import Sidebar from "../components/Sidebar/index.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./globals.css"; // ✅ This is correct!
 import { Poppins } from 'next/font/google';
 
 const poppins = Poppins({
