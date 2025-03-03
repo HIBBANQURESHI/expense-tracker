@@ -42,9 +42,21 @@ const LoanList = () => {
     }
   };
 
+  // Filter logic: Match search text and selected date
   const filteredLoans = loans.filter((loan) => {
     const matchesSearch = loan.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = selectedDate ? new Date(loan.createdAt).toDateString() === new Date(selectedDate).toDateString() : true;
+  
+    let loanDate = new Date(loan.date);
+    let selected = selectedDate ? new Date(selectedDate) : null;
+  
+    // Ensure valid dates before comparison
+    if (isNaN(loanDate)) return false;
+    loanDate.setHours(0, 0, 0, 0);
+  
+    const matchesDate = selected 
+    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+    : true;
+  
     return matchesSearch && matchesDate;
   });
 
@@ -96,7 +108,7 @@ const LoanList = () => {
                 <tr key={loan._id} className="border-b border-black hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{loan.name}</td>
                   <td className="px-5 py-4 text-sm text-green-700">${loan.amount}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(loan.createdAt).toDateString()}</td>
+                  <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateReceiving/${loan._id}`}>
                       <button className="text-blue-500 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>

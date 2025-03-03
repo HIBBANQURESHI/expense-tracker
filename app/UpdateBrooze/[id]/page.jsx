@@ -8,7 +8,14 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: 0, credit: 0, balance: 0 });
+  const [sale, setSale] = useState({ 
+    name: '', 
+    description: '', 
+    amount: 0, 
+    credit: 0, 
+    balance: 0, 
+    date: '' 
+  });
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const router = useRouter();
@@ -27,8 +34,9 @@ const UpdateSale = () => {
           name: response.data.name || '',
           description: response.data.description || '',
           amount: response.data.amount || 0,
-          received: response.data.credit || 0,
-          remaining: response.data.balance || (response.data.amount - response.data.credit) || 0
+          credit: response.data.credit || 0,
+          balance: response.data.balance || (response.data.amount - response.data.credit) || 0,
+          date: response.data.date ? new Date(response.data.date).toISOString().split('T')[0] : ''
         });
       }
     } catch (error) {
@@ -39,11 +47,14 @@ const UpdateSale = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let updatedSale = { ...sale, [name]: name === 'amount' || name === 'credit' ? parseFloat(value) || 0 : value };
+    let updatedSale = { 
+      ...sale, 
+      [name]: name === 'amount' || name === 'credit' ? parseFloat(value) || 0 : value 
+    };
 
     // Automatically calculate remaining balance
     if (name === 'amount' || name === 'credit') {
-      updatedSale.remaining = Number(updatedSale.amount - updatedSale.credit);
+      updatedSale.balance = Number(updatedSale.amount - updatedSale.credit);
     }
 
     setSale(updatedSale);
@@ -69,7 +80,7 @@ const UpdateSale = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Edit</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-center">Edit Sale</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium">Name</label>
@@ -111,11 +122,11 @@ const UpdateSale = () => {
             <input 
               type="number" 
               name="credit" 
-              value={sale.received} 
+              value={sale.credit} 
               onChange={handleChange} 
               required 
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter received amount"
+              placeholder="Enter credit amount"
             />
           </div>
           <div>
@@ -123,9 +134,20 @@ const UpdateSale = () => {
             <input 
               type="number" 
               name="balance" 
-              value={sale.remaining} 
+              value={sale.balance} 
               disabled
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="date" className="block text-sm font-medium">Date</label>
+            <input 
+              type="date" 
+              name="date" 
+              value={sale.date} 
+              onChange={handleChange} 
+              required 
+              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button 

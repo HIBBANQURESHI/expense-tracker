@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateExpense = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: '' });
+  const [sale, setSale] = useState({ name: '', description: '', amount: '', date:'' });
   const { id } = useParams(); 
   const router = useRouter();
 
@@ -86,6 +86,18 @@ const UpdateExpense = () => {
               required 
               className="w-full mt-2 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter amount"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="date" className="block text-sm font-medium">Date</label>
+            <input 
+              type="date" 
+              name="date" 
+              value={sale.date} 
+              onChange={handleChange} 
+              required 
+              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button 

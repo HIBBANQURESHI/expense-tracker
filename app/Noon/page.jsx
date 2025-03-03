@@ -44,10 +44,22 @@ const Expense = () => {
     }
   };
 
+  // Filter logic: Match search text and selected date
   const filteredSales = sales.filter((sale) => {
-    return selectedDate
-      ? new Date(sale.createdAt).toDateString() === new Date(selectedDate).toDateString()
-      : true;
+    const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
+  
+    let loanDate = new Date(sale.date);
+    let selected = selectedDate ? new Date(selectedDate) : null;
+  
+    // Ensure valid dates before comparison
+    if (isNaN(loanDate)) return false;
+    loanDate.setHours(0, 0, 0, 0);
+  
+    const matchesDate = selected 
+    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+    : true;
+  
+    return matchesSearch && matchesDate;
   });
 
   return (
@@ -102,7 +114,7 @@ const Expense = () => {
                 <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{sale.deliveries}</td>
                   <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(sale.createdAt).toDateString()}</td>
+                  <td className="px-5 py-4 text-sm">{new Date(sale.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateNoon/${sale._id}`}>
                       <button className="text-blue-500 py-1 px-3 rounded-lg mr-2 transition-all">

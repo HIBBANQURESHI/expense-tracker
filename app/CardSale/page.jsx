@@ -42,9 +42,21 @@ const CardSale = () => {
     }
   };
 
+  // Filter logic: Match search text and selected date
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = selectedDate ? new Date(sale.createdAt).toDateString() === new Date(selectedDate).toDateString() : true;
+  
+    let loanDate = new Date(sale.date);
+    let selected = selectedDate ? new Date(selectedDate) : null;
+  
+    // Ensure valid dates before comparison
+    if (isNaN(loanDate)) return false;
+    loanDate.setHours(0, 0, 0, 0);
+  
+    const matchesDate = selected 
+    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+    : true;
+  
     return matchesSearch && matchesDate;
   });
 
@@ -95,7 +107,7 @@ const CardSale = () => {
                   <td className="px-5 py-4 text-sm">{sale.name}</td>
                   <td className="px-5 py-4 text-sm">{sale.description}</td>
                   <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(sale.createdAt).toDateString()}</td>
+                  <td className="px-5 py-4 text-sm">{new Date(sale.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm  flex gap-2">
                     <Link href={`/UpdateCardSale/${sale._id}`}>
                       <button className="text-blue-500 py-1 px-3 rounded-lg transition-all">Edit</button>

@@ -10,7 +10,8 @@ const CreateCardSale = () => {
   const [sale, setSale] = useState({
     name: '',
     description: '',
-    amount: ''
+    amount: '',
+    date:''
   });
 
   const router = useRouter();
@@ -83,6 +84,19 @@ const CreateCardSale = () => {
               onChange={handleChange}
               placeholder="Enter amount"
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              required
+            />
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={sale.date}
+              onChange={handleChange}
+              className="mt-1 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>

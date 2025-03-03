@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateExpense = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: '' });
+  const [sale, setSale] = useState({ name: '', description: '', amount: '', date:'' });
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -65,6 +65,19 @@ const CreateExpense = () => {
               onChange={handleChange}
               placeholder="Enter amount"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={sale.date}
+              onChange={handleChange}
+              className="mt-1 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>

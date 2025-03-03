@@ -44,17 +44,22 @@ const Expense = () => {
     }
   };
 
+  // Filter logic: Match search text and selected date
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = selectedDate
-      ? new Date(sale.createdAt).toDateString() === new Date(selectedDate).toDateString()
-      : true;
-    const matchesPayment =
-      paymentFilter === ""
-        ? true
-        : sale.description.toLowerCase().includes(paymentFilter.toLowerCase());
-
-    return matchesSearch && matchesDate && matchesPayment;
+  
+    let loanDate = new Date(sale.date);
+    let selected = selectedDate ? new Date(selectedDate) : null;
+  
+    // Ensure valid dates before comparison
+    if (isNaN(loanDate)) return false;
+    loanDate.setHours(0, 0, 0, 0);
+  
+    const matchesDate = selected 
+    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+    : true;
+  
+    return matchesSearch && matchesDate;
   });
 
   return (
@@ -120,7 +125,7 @@ const Expense = () => {
                     <td className="px-4 py-3.5 text-sm text-gray-600">{sale.description}</td>
                     <td className="px-4 py-3.5 text-sm font-medium text-green-600">${sale.amount}</td>
                     <td className="px-4 py-3.5 text-sm text-gray-500">
-                      {new Date(sale.createdAt).toLocaleDateString()}
+                      {new Date(sale.date).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3.5 flex gap-2">
                       <Link href={`/UpdateExpense/${sale._id}`}>

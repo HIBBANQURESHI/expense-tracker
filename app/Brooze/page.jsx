@@ -23,7 +23,7 @@ const LoanList = () => {
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze");
+      const response = await axios.get("http://localhost:4000/api/brooze");
       console.log("API Response:", response.data); 
       if (response.data) {
         setLoans(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -35,7 +35,7 @@ const LoanList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/brooze/${id}`);
+      await axios.delete(`http://localhost:4000/api/brooze/${id}`);
       toast.success("Loan deleted successfully");
       fetchLoans();
     } catch (error) {
@@ -43,11 +43,24 @@ const LoanList = () => {
     }
   };
 
+  // Filter logic: Match search text and selected date
   const filteredLoans = loans.filter((loan) => {
-    const matchesSearch = loan.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = selectedDate ? new Date(loan.createdAt).toDateString() === new Date(selectedDate).toDateString() : true;
-    return matchesSearch && matchesDate;
-  });
+  const matchesSearch = loan.name.toLowerCase().includes(search.toLowerCase());
+
+  let loanDate = new Date(loan.date);
+  let selected = selectedDate ? new Date(selectedDate) : null;
+
+  // Ensure valid dates before comparison
+  if (isNaN(loanDate)) return false;
+  loanDate.setHours(0, 0, 0, 0);
+
+  const matchesDate = selected 
+  ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+  : true;
+
+  return matchesSearch && matchesDate;
+});
+
 
   return (
     <motion.div
@@ -58,6 +71,7 @@ const LoanList = () => {
     >
       <h1 className="text-4xl font-bold mb-6">Brooze Company</h1>
 
+      {/* Search and Date Filter */}
       <div className="flex gap-4 mb-6 w-full max-w-4xl">
         <input
           type="text"
@@ -74,13 +88,14 @@ const LoanList = () => {
         />
       </div>
       
-
+      {/* Create New Button */}
       <Link href="/CreateBrooze">
         <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
           Create New
         </button>
       </Link>
 
+      {/* Loans Table */}
       <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white py-3">
         <table className="min-w-full leading-normal">
           <thead>
@@ -101,7 +116,7 @@ const LoanList = () => {
                   <td className="px-5 py-4 text-sm text-green-400">${loan.amount}</td>
                   <td className="px-5 py-4 text-sm text-blue-400">${loan.credit}</td>
                   <td className="px-5 py-4 text-sm text-red-400">${loan.balance}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(loan.createdAt).toDateString()}</td>
+                  <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateBrooze/${loan._id}`}>
                       <button className="text-blue-600 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>

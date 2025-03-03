@@ -12,6 +12,7 @@ const CreateLoan = () => {
     amount: '',
     received: '',
     remaining: '',
+    date:''
   });
 
   const router = useRouter();
@@ -122,6 +123,19 @@ const CreateLoan = () => {
               placeholder="Enter received amount"
               readOnly
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+            />
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={loan.date}
+              onChange={handleChange}
+              className="mt-1 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              required
             />
           </div>
 

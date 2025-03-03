@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: 0, received: 0, remaining: 0 });
+  const [sale, setSale] = useState({ name: '', description: '', amount: 0, received: 0, remaining: 0, date:'' });
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const router = useRouter();
@@ -28,7 +28,9 @@ const UpdateSale = () => {
           description: response.data.description || '',
           amount: response.data.amount || 0,
           received: response.data.received || 0,
-          remaining: response.data.remaining || (response.data.amount - response.data.received) || 0
+          remaining: response.data.remaining || (response.data.amount - response.data.received) || 0,
+          date: response.data.date ? new Date(response.data.date).toISOString().split('T')[0] : ''
+
         });
       }
     } catch (error) {
@@ -126,6 +128,18 @@ const UpdateSale = () => {
               value={sale.remaining} 
               disabled
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="date" className="block text-sm font-medium">Date</label>
+            <input 
+              type="date" 
+              name="date" 
+              value={sale.date} 
+              onChange={handleChange} 
+              required 
+              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button 

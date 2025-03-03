@@ -53,9 +53,21 @@ const SaleByCash = () => {
     setSelectedDate(null);
   };
 
+  // Filter logic: Match search text and selected date
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = selectedDate ? new Date(sale.createdAt).toDateString() === new Date(selectedDate).toDateString() : true;
+  
+    let loanDate = new Date(sale.date);
+    let selected = selectedDate ? new Date(selectedDate) : null;
+  
+    // Ensure valid dates before comparison
+    if (isNaN(loanDate)) return false;
+    loanDate.setHours(0, 0, 0, 0);
+  
+    const matchesDate = selected 
+    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+    : true;
+  
     return matchesSearch && matchesDate;
   });
 
@@ -131,7 +143,7 @@ const SaleByCash = () => {
                       <td className="px-4 py-3 text-sm text-gray-800">{sale.name}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{sale.description}</td>
                       <td className="px-4 py-3 text-sm font-medium text-green-600">${sale.amount.toFixed(2)}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(sale.createdAt)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(sale.date)}</td>
                       <td className="px-4 py-3 text-sm space-x-2">
                         <Link href={`/UpdateSale/${sale._id}`}>
                           <button className="text-blue-600 py-1 px-3 rounded text-md font-normal transition-colors">Edit</button>
