@@ -13,6 +13,7 @@ const poppins = Poppins({
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
+            <link rel="preload" href="/_next/static/css/0acef4df005bbe6c.css" as="style" />
             <body className={`flex min-h-screen bg-white text-black ${poppins.className}`}>
                 <Sidebar />
                 <main className="flex-1 p-6 overflow-auto">
