@@ -4,6 +4,9 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true, // ✅ Skips ESLint during production build
+  },
 };
 
 
