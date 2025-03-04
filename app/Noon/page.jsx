@@ -46,7 +46,6 @@ const Expense = () => {
 
   // Filter logic: Match search text and selected date
   const filteredSales = sales.filter((sale) => {
-    const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
   
     let loanDate = new Date(sale.date);
     let selected = selectedDate ? new Date(selectedDate) : null;
@@ -59,7 +58,7 @@ const Expense = () => {
     ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
     : true;
   
-    return matchesSearch && matchesDate;
+    return matchesDate;
   });
 
   return (

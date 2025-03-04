@@ -49,7 +49,7 @@ const CreateLoan = () => {
       });
   
       toast.success("Loan added successfully!");
-      router.push("/KPMG");
+      router.push("/Kpmg");
     } catch (error) {
       console.error("Error adding loan:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Error adding loan");

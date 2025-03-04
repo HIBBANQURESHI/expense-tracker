@@ -60,7 +60,7 @@ const LoanTable = ({ loans, title }) => {
   const filteredLoans = filter === "monthly" 
     ? uniqueLoans 
     : uniqueLoans.filter(loan => 
-        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+        new Date(loan.date).toDateString() === currentDate.toDateString()
       );
 
   return (
@@ -96,7 +96,7 @@ const LoanTable = ({ loans, title }) => {
                     {loan.name || "N/A"}
                   </td>
                   <td className="p-3 text-sm text-gray-600">
-                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                    {new Date(loan.date).toDateString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-sky-600">
                     SAR. {(loan.amount || 0).toLocaleString()}
@@ -135,7 +135,7 @@ const BroozeTable = ({ loans, title }) => {
   const filteredLoans = filter === "monthly" 
     ? uniqueLoans 
     : uniqueLoans.filter(loan => 
-        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+        new Date(loan.date).toDateString() === currentDate.toDateString()
       );
 
   return (
@@ -171,8 +171,9 @@ const BroozeTable = ({ loans, title }) => {
                     {loan.name || "N/A"}
                   </td>
                   <td className="p-3 text-sm text-gray-600">
-                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                    {new Date(loan.date).toDateString()}
                   </td>
+
                   <td className="p-3 text-sm font-medium text-sky-600">
                   SAR. {(loan.amount || 0).toLocaleString()}
                   </td>
@@ -210,7 +211,7 @@ const KPMGTable = ({ loans, title }) => {
   const filteredLoans = filter === "monthly" 
     ? uniqueLoans 
     : uniqueLoans.filter(loan => 
-        new Date(loan.createdAt).toDateString() === currentDate.toDateString()
+        new Date(loan.date).toDateString() === currentDate.toDateString()
       );
 
   return (
@@ -246,7 +247,7 @@ const KPMGTable = ({ loans, title }) => {
                     {loan.name || "N/A"}
                   </td>
                   <td className="p-3 text-sm text-gray-600">
-                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                    {new Date(loan.date).toDateString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-sky-600">
                   SAR. {(loan.amount || 0).toLocaleString()}
@@ -281,12 +282,17 @@ const ReceivingTable = ({ loans, title }) => {
   // Remove duplicate loans based on _id
   const uniqueLoans = Array.from(new Map(loans.map(loan => [loan._id, loan])).values());
 
+  console.log("Loans in ReceivingTable:", loans);
+
   // Filter loans based on selection (monthly or today)
   const filteredLoans = filter === "monthly" 
     ? uniqueLoans 
     : uniqueLoans.filter(loan => 
         new Date(loan.createdAt).toDateString() === currentDate.toDateString()
       );
+
+      console.log("filteredLoans in ReceivingTable:", filteredLoans); // Add this line
+
 
   return (
     <div className="col-span-full bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
@@ -319,7 +325,7 @@ const ReceivingTable = ({ loans, title }) => {
                     {loan.name || "N/A"}
                   </td>
                   <td className="p-3 text-sm text-gray-600">
-                    {loan.createdAt ? new Date(loan.createdAt).toLocaleDateString("en-GB") : "Invalid date"}
+                    {new Date(loan.date).toDateString()}
                   </td>
                   <td className="p-3 text-sm font-medium text-green-700">
                   SAR. {(loan.amount || 0).toLocaleString()}
@@ -401,10 +407,10 @@ const Home = () => {
           fetch(`https://akc-expense-server.vercel.app/api/marsool/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/ninja/${year}/${month}`), 
           fetch(`https://akc-expense-server.vercel.app/api/ninja/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/loan/${year}/${month}`),
-          fetch(`https://akc-expense-server.vercel.app/api/loan/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/receiving/${year}/${month}`),
-          fetch(`https://akc-expense-server.vercel.app/api/receiving/${year}/${month}/${day}`)
+          fetch(`https://akc-expense-server.vercel.app/api/loan`),
+          fetch(`https://akc-expense-server.vercel.app/api/loan`),
+          fetch(`https://akc-expense-server.vercel.app/api/receiving`),
+          fetch(`https://akc-expense-server.vercel.app/api/receiving`)
         ]);
 
         const data = await Promise.all(responses.map(res => res.ok ? res.json() : {}));
@@ -436,6 +442,8 @@ const Home = () => {
         setDailyLoan(data[23]);
         setMonthlyReceiving(data[24]);
         setDailyReceiving(data[25]);
+        console.log("monthlyReceiving:", data[24]);
+        console.log("dailyReceiving:", data[25]);
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -445,15 +453,15 @@ const Home = () => {
   }, []);
 // In your useEffect for net sales calculations
 useEffect(() => {
-  const cash = cashSales.totalAmount || 0;
-  const card = cardSales.totalAmount || 0;
+  const cash = cashSales?.totalAmount || 0;
+  const card = cardSales?.totalAmount || 0;
   const broozeTotal = monthlyBrooze.reduce((acc, loan) => acc + (loan?.amount || 0), 0);
   setNetSalesMonthly(cash + card + broozeTotal);
 }, [cashSales, cardSales, monthlyBrooze]);
 
 useEffect(() => {
-  const dailyCash = dailySales.totalAmount || 0;
-  const dailyCard = dailyCardSales.totalAmount || 0;
+  const dailyCash = dailySales?.totalAmount || 0;
+  const dailyCard = dailyCardSales?.totalAmount || 0;
   const dailyBroozeTotal = dailyBrooze.reduce((acc, loan) => acc + (loan?.amount || 0), 0);
   setNetDailyTotal(dailyCash + dailyCard + dailyBroozeTotal);
 }, [dailySales, dailyCardSales, dailyBrooze]);

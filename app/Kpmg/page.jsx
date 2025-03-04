@@ -87,7 +87,7 @@ const LoanList = () => {
       </div>
       
 
-      <Link href="/CreateBrooze">
+      <Link href="/CreateKpmg">
         <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
           Create New
         </button>
@@ -115,7 +115,7 @@ const LoanList = () => {
                   <td className="px-5 py-4 text-sm text-red-400">${loan.balance}</td>
                   <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
-                    <Link href={`/UpdateBrooze/${loan._id}`}>
+                    <Link href={`/UpdateKpmg/${loan._id}`}>
                       <button className="text-blue-600 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
                     </Link>
                     <button onClick={() => handleDelete(loan._id)} className="text-red-500 py-1 px-3 rounded-lg transition-all">Delete</button>
