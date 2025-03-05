@@ -44,22 +44,22 @@ const Expense = () => {
     }
   };
 
-  // Filter logic: Match search text and selected date
+  // Updated filter logic with payment method
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
-  
-    let loanDate = new Date(sale.date);
+    const matchesPayment = paymentFilter ? sale.paymentMethod === paymentFilter : true;
+    
+    let expenseDate = new Date(sale.date);
     let selected = selectedDate ? new Date(selectedDate) : null;
-  
-    // Ensure valid dates before comparison
-    if (isNaN(loanDate)) return false;
-    loanDate.setHours(0, 0, 0, 0);
-  
+
+    if (isNaN(expenseDate)) return false;
+    expenseDate.setHours(0, 0, 0, 0);
+
     const matchesDate = selected 
-    ? loanDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
-    : true;
-  
-    return matchesSearch && matchesDate;
+      ? expenseDate.toISOString().split("T")[0] === selected.toISOString().split("T")[0]
+      : true;
+
+    return matchesSearch && matchesDate && matchesPayment;
   });
 
   return (
@@ -113,6 +113,7 @@ const Expense = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Expense Name</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Description</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Payment Method</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
               </tr>
@@ -123,7 +124,16 @@ const Expense = () => {
                   <tr key={sale._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3.5 text-sm text-gray-700">{sale.name}</td>
                     <td className="px-4 py-3.5 text-sm text-gray-600">{sale.description}</td>
-                    <td className="px-4 py-3.5 text-sm font-medium text-green-600">${sale.amount}</td>
+                    <td className="px-4 py-3.5 text-sm font-medium text-red-600">${sale.amount}</td>
+                    <td className="px-4 py-3.5">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        sale.paymentMethod === 'cash' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {sale.paymentMethod.charAt(0).toUpperCase() + sale.paymentMethod.slice(1)}
+                      </span>
+                    </td>
                     <td className="px-4 py-3.5 text-sm text-gray-500">
                       {new Date(sale.date).toLocaleDateString()}
                     </td>
@@ -144,7 +154,7 @@ const Expense = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-4 py-6 text-center text-gray-500">
+                  <td colSpan="6" className="px-4 py-6 text-center text-gray-500">
                     No expense records found
                   </td>
                 </tr>

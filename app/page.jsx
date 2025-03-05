@@ -352,8 +352,8 @@ const Home = () => {
   const [cardSales, setCardSales] = useState({ totalSales: 0, totalAmount: 0 });
   const [dailySales, setDailySales] = useState({ totalSales: 0, totalAmount: 0 });
   const [dailyCardSales, setDailyCardSales] = useState({ totalSales: 0, totalAmount: 0 });
-  const [monthlyExpense, setMonthlyExpense] = useState({ totalAmount: 0 });
-  const [dailyExpense, setDailyExpense] = useState({ totalAmount: 0 });
+  const [monthlyExpense, setMonthlyExpense] = useState({ cash: 0, card: 0, total: 0 });
+  const [dailyExpense, setDailyExpense] = useState({ cash: 0, card: 0, total: 0 });
   const [monthlyBrooze, setMonthlyBrooze] = useState([]);
   const [dailyBrooze, setDailyBrooze] = useState([]);
   const [monthlyKpmg, setMonthlyKpmg] = useState([]);
@@ -389,8 +389,8 @@ const Home = () => {
           fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/expense/${year}/${month}`), 
-          fetch(`https://akc-expense-server.vercel.app/api/expense/${year}/${month}/${day}`),
+          fetch(`https://akc-expense-server.vercel.app/api/expense/monthly-summary/${year}/${month}`), 
+          fetch(`https://akc-expense-server.vercel.app/api/expense/daily-summary/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/kpmg/${year}/${month}`),
@@ -445,6 +445,7 @@ const Home = () => {
         console.log("monthlyReceiving:", data[24]);
         console.log("dailyReceiving:", data[25]);
 
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -456,8 +457,10 @@ useEffect(() => {
   const cash = cashSales?.totalAmount || 0;
   const card = cardSales?.totalAmount || 0;
   const broozeTotal = monthlyBrooze.reduce((acc, loan) => acc + (loan?.amount || 0), 0);
-  setNetSalesMonthly(cash + card + broozeTotal);
-}, [cashSales, cardSales, monthlyBrooze]);
+  const totalExpenses = monthlyExpense.total || 0;
+  
+  setNetSalesMonthly((cash + card + broozeTotal) - totalExpenses);
+}, [cashSales, cardSales, monthlyBrooze, monthlyExpense]);
 
 useEffect(() => {
   const dailyCash = dailySales?.totalAmount || 0;
@@ -524,8 +527,30 @@ const generatePDF = () => {
         <StatCard title="Today's Card Sales" value={dailyCardSales.totalAmount} isAmount />
 
         <SectionHeader title="Expenses" />
-        <StatCard title="Monthly Expenses" value={monthlyExpense.totalAmount || 0} isAmount colorClass="text-red-600" />
-        <StatCard title="Daily Expenses" value={dailyExpense.totalAmount} isAmount colorClass="text-red-600" />
+<StatCard 
+  title="Monthly Cash Expenses" 
+  value={monthlyExpense.cash} 
+  isAmount 
+  colorClass="text-red-600" 
+/>
+<StatCard 
+  title="Monthly Card Expenses" 
+  value={monthlyExpense.card} 
+  isAmount 
+  colorClass="text-red-600" 
+/>
+<StatCard 
+  title="Daily Cash Expenses" 
+  value={dailyExpense.cash} 
+  isAmount 
+  colorClass="text-red-600" 
+/>
+<StatCard 
+  title="Daily Card Expenses" 
+  value={dailyExpense.card} 
+  isAmount 
+  colorClass="text-red-600" 
+/>
 
         
 

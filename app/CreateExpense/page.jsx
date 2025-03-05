@@ -7,18 +7,24 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateExpense = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: '', date:'' });
+  const [expense, setExpense] = useState({ 
+    name: '', 
+    description: '', 
+    amount: '', 
+    date: '',
+    paymentMethod: 'cash' // Added payment method field
+  });
   const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSale({ ...sale, [name]: value });
+    setExpense({ ...expense, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://akc-expense-server.vercel.app/api/expense', sale);
+      await axios.post('https://akc-expense-server.vercel.app/api/expense', expense);
       toast.success('Expense added successfully!');
       router.push('/Expense');
     } catch (error) {
@@ -37,18 +43,19 @@ const CreateExpense = () => {
             <input
               type="text"
               name="name"
-              value={sale.name}
+              value={expense.name}
               onChange={handleChange}
               placeholder="Enter expense name"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
           </div>
+          
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
               name="description"
-              value={sale.description}
+              value={expense.description}
               onChange={handleChange}
               placeholder="Enter details"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -56,12 +63,13 @@ const CreateExpense = () => {
               required
             />
           </div>
+          
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount</label>
             <input
               type="number"
               name="amount"
-              value={sale.amount}
+              value={expense.amount}
               onChange={handleChange}
               placeholder="Enter amount"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -69,18 +77,35 @@ const CreateExpense = () => {
             />
           </div>
 
-          {/* Date */}
+          {/* Payment Method Selector */}
+          <div>
+            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
+              Payment Method
+            </label>
+            <select
+              name="paymentMethod"
+              value={expense.paymentMethod}
+              onChange={handleChange}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            >
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Date</label>
             <input
               type="date"
               name="date"
-              value={sale.date}
+              value={expense.date}
               onChange={handleChange}
               className="mt-1 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
+          
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition duration-200"
