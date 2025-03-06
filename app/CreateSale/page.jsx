@@ -11,7 +11,8 @@ const CreateSale = () => {
     name: '',
     description: '',
     amount: '',
-    date:''
+    date:'',
+    paymentMethod: 'cash'
   });
 
   const router = useRouter();
@@ -26,7 +27,7 @@ const CreateSale = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://akc-expense-server.vercel.app/api/sales', sale);
+      const response = await axios.post('http://localhost:4000/api/sales', sale);
         toast.success('Sale created successfully!');
         router.push('/SaleByCash');
     } catch (error) {
@@ -86,6 +87,22 @@ const CreateSale = () => {
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               required
             />
+          </div>
+
+          <div className="mt-4">
+              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-300">
+                  Payment Method
+              </label>
+              <select
+                  name="paymentMethod"
+                  value={sale.paymentMethod}
+                  onChange={handleChange}
+                  className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  required
+              >
+                  <option value="cash">Cash</option>
+                  <option value="card">Card</option>
+              </select>
           </div>
 
           {/* Date */}

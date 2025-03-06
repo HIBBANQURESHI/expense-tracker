@@ -26,7 +26,7 @@ const CreateCardSale = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://akc-expense-server.vercel.app/api/cardsale', sale);
+      const response = await axios.post('http://localhost:4000/api/cardsale', sale);
         toast.success('Sale created successfully!');
         router.push('/CardSale');
     } catch (error) {

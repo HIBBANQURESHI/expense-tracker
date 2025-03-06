@@ -21,7 +21,7 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`https://akc-expense-server.vercel.app/api/loan/${id}`);
+      const response = await axios.get(`http://localhost:4000/api/loan/${id}`);
       if (response.data) {
         setSale({
           name: response.data.name || '',
@@ -57,7 +57,7 @@ const UpdateSale = () => {
     setLoading(true);
 
     try {
-      await axios.put(`https://akc-expense-server.vercel.app/api/loan/${id}`, sale);
+      await axios.put(`http://localhost:4000/api/loan/${id}`, sale);
       toast.success('Sale updated successfully!');
       router.push('/Loan');
     } catch (error) {

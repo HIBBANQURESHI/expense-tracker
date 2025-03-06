@@ -22,7 +22,7 @@ const Sidebar = () => {
     { title: 'Dashboard', icon: <MdDashboard />, path: '/' },
     { title: 'Expense', icon: <MdMoney />, path: '/Expense' },
     { title: 'Cash Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
-    { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
+   // { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
     { title: 'Brooze Company', icon: <MdBusiness />, path: '/Brooze' },
     { title: 'KPMG Company', icon: <MdBusiness />, path: '/Kpmg' },
     { title: 'Loan', icon: <MdAccountBalance />, path: '/Loan' },

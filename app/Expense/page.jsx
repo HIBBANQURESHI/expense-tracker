@@ -16,14 +16,20 @@ const Expense = () => {
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [paymentFilter, setPaymentFilter] = useState("");
+  const [monthlySummary, setMonthlySummary] = useState({ 
+    cash: 0, 
+    card: 0, 
+    total: 0 
+  });
 
   useEffect(() => {
     fetchSales();
+    fetchMonthlySummary();
   }, []);
 
   const fetchSales = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/expense");
+      const response = await axios.get("http://localhost:4000/api/expense");
       if (response.data) {
         setSales(
           response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -34,17 +40,29 @@ const Expense = () => {
     }
   };
 
+  const fetchMonthlySummary = async () => {
+    try {
+      const today = new Date();
+      const response = await axios.get(
+        `http://localhost:4000/api/expense/monthly-summary/${today.getFullYear()}/${today.getMonth() + 1}`
+      );
+      setMonthlySummary(response.data);
+    } catch (error) {
+      console.error("Error fetching monthly summary:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/expense/${id}`);
+      await axios.delete(`http://localhost:4000/api/expense/${id}`);
       toast.success("Expense record deleted successfully");
       fetchSales();
+      fetchMonthlySummary(); // Refresh monthly summary after deletion
     } catch (error) {
       toast.error("Error deleting expense record");
     }
   };
 
-  // Updated filter logic with payment method
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
     const matchesPayment = paymentFilter ? sale.paymentMethod === paymentFilter : true;
@@ -62,6 +80,10 @@ const Expense = () => {
     return matchesSearch && matchesDate && matchesPayment;
   });
 
+  const calculateSearchTotal = () => {
+    return filteredSales.reduce((acc, sale) => acc + sale.amount, 0);
+  };
+
   return (
     <motion.div
       className="min-h-screen bg-white p-8 flex flex-col items-center"
@@ -70,6 +92,28 @@ const Expense = () => {
       transition={{ duration: 0.3 }}
     >
       <div className="w-full max-w-6xl">
+        {/* Monthly Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-blue-600">Cash Expenses</h3>
+            <p className="mt-2 text-2xl font-semibold text-blue-700">
+              ${monthlySummary.cash.toFixed(2)}
+            </p>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-green-600">Card Expenses</h3>
+            <p className="mt-2 text-2xl font-semibold text-green-700">
+              ${monthlySummary.card.toFixed(2)}
+            </p>
+          </div>
+          <div className="bg-purple-50 p-4 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-purple-600">Monthly Total</h3>
+            <p className="mt-2 text-2xl font-semibold text-purple-700">
+              ${monthlySummary.total.toFixed(2)}
+            </p>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-semibold text-gray-800">Expense Management</h1>
           <Link href="/CreateExpense">
@@ -79,6 +123,7 @@ const Expense = () => {
           </Link>
         </div>
 
+        {/* Filters Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <input
             type="text"
@@ -106,8 +151,19 @@ const Expense = () => {
           </select>
         </div>
 
+        {/* Search Summary */}
+        {search && (
+          <div className="mb-4 p-4 bg-yellow-50 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-yellow-700">
+              Total for "{search}": ${calculateSearchTotal().toFixed(2)}
+            </h3>
+          </div>
+        )}
+
+        {/* Expenses Table */}
         <div className="border rounded-xl overflow-hidden shadow-sm">
           <table className="w-full">
+            {/* Table Head */}
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Expense Name</th>
@@ -118,11 +174,13 @@ const Expense = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
               </tr>
             </thead>
+            
+            {/* Table Body */}
             <tbody className="divide-y divide-gray-200">
               {filteredSales.length > 0 ? (
                 filteredSales.map((sale) => (
                   <tr key={sale._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3.5 text-sm text-gray-700">{sale.name}</td>
+                                        <td className="px-4 py-3.5 text-sm text-gray-700">{sale.name}</td>
                     <td className="px-4 py-3.5 text-sm text-gray-600">{sale.description}</td>
                     <td className="px-4 py-3.5 text-sm font-medium text-red-600">${sale.amount}</td>
                     <td className="px-4 py-3.5">

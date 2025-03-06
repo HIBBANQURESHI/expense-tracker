@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: '', date:'' });
+  const [sale, setSale] = useState({ name: '', description: '', amount: '', date:'',    paymentMethod: 'cash'});
   const { id } = useParams(); 
   const router = useRouter();
 
@@ -20,7 +20,7 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${id}`);
+      const response = await axios.get(`http://localhost:4000/api/sales/${id}`);
       if (response.data) {
         setSale(response.data);
       }
@@ -38,7 +38,7 @@ const UpdateSale = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://akc-expense-server.vercel.app/api/sales/${id}`, sale);
+      await axios.put(`http://localhost:4000/api/sales/${id}`, sale);
       toast.success('Sale updated successfully');
       router.push('/SaleByCash');
     } catch (error) {
@@ -88,6 +88,23 @@ const UpdateSale = () => {
               placeholder="Enter amount"
             />
           </div>
+
+          <div className="mt-4">
+              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-300">
+                  Payment Method
+              </label>
+              <select
+                  name="paymentMethod"
+                  value={sale.paymentMethod}
+                  onChange={handleChange}
+                  className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  required
+              >
+                  <option value="cash">Cash</option>
+                  <option value="card">Card</option>
+              </select>
+          </div>
+
 
           <div>
             <label htmlFor="date" className="block text-sm font-medium">Date</label>

@@ -26,7 +26,7 @@ const UpdateExpense = () => {
 
   const fetchExpenseDetails = async () => {
     try {
-      const response = await axios.get(`https://akc-expense-server.vercel.app/api/expense/${id}`);
+      const response = await axios.get(`http://localhost:4000/api/expense/${id}`);
       if (response.data) {
         // Format date to YYYY-MM-DD for date input
         const formattedDate = new Date(response.data.date).toISOString().split('T')[0];
@@ -49,7 +49,7 @@ const UpdateExpense = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://akc-expense-server.vercel.app/api/expense/${id}`, expense);
+      await axios.put(`http://localhost:4000/api/expense/${id}`, expense);
       toast.success('Expense updated successfully');
       router.push('/Expense');
     } catch (error) {

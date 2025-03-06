@@ -1,41 +1,60 @@
-"use client";
+'use client';
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
-// Dynamically import DatePicker to avoid SSR issues
-const DatePicker = dynamic(() => import("react-datepicker"), { ssr: false });
-import "react-datepicker/dist/react-datepicker.css";
+const DatePicker = dynamic(() => import('react-datepicker'), { ssr: false });
+import 'react-datepicker/dist/react-datepicker.css';
 
 const LoanList = () => {
   const [loans, setLoans] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
+  const [summary, setSummary] = useState({
+    totalAmount: 0,
+    totalCredit: 0,
+    totalBalance: 0,
+    totalLoans: 0
+  });
 
   useEffect(() => {
     fetchLoans();
+    fetchSummary();
   }, []);
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze");
-      console.log("API Response:", response.data); 
-      if (response.data) {
-        setLoans(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      }
+      const response = await axios.get("http://localhost:4000/api/brooze");
+      const sortedLoans = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setLoans(sortedLoans);
     } catch (error) {
       console.error("Error fetching loans:", error);
     }
   };
 
+  const fetchSummary = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/brooze/summary/total");
+      setSummary(response.data);
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+      toast.error("Failed to load financial summary");
+      setSummary({
+        totalAmount: 0,
+        totalCredit: 0,
+        totalBalance: 0,
+        totalLoans: 0
+      });
+    }
+  };
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/brooze/${id}`);
+      await axios.delete(`http://localhost:4000/api/brooze/${id}`);
       toast.success("Loan deleted successfully");
       fetchLoans();
     } catch (error) {
@@ -61,77 +80,107 @@ const LoanList = () => {
   return matchesSearch && matchesDate;
 });
 
-
   return (
     <motion.div
-      className="min-h-screen bg-white text-black p-6 flex flex-col items-center"
+      className="min-h-screen bg-gray-50 p-6 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
-      <h1 className="text-4xl font-bold mb-6">Brooze Company</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Brooze Company Records</h1>
 
-      {/* Search and Date Filter */}
-      <div className="flex gap-4 mb-6 w-full max-w-4xl">
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          className="w-full p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
-          placeholderText="Select a date"
-        />
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 w-full max-w-6xl">
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Remaining balance</h3>
+          <p className="mt-2 text-2xl font-semibold text-red-600">
+            ${summary.totalBalance.toFixed(2)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Total Amount</h3>
+          <p className="mt-2 text-2xl font-semibold text-blue-600">
+            ${summary.totalAmount.toFixed(2)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Paid Amount</h3>
+          <p className="mt-2 text-2xl font-semibold text-green-600">
+            ${summary.totalCredit.toFixed(2)}
+          </p>
+        </div>
       </div>
-      
-      {/* Create New Button */}
-      <Link href="/CreateBrooze">
-        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-          Create New
-        </button>
-      </Link>
 
-      {/* Loans Table */}
-      <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white py-3">
-        <table className="min-w-full leading-normal">
-          <thead>
-            <tr className="bg-gray-100 text-black">
-              <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Credit</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Balance</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Created At</th>
-              <th className="px-5 py-3 text-left text-sm font-semibold">Actions</th>
+      {/* Filters Section */}
+      <div className="w-full max-w-6xl mb-6 space-y-4">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Search client..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <DatePicker
+            selected={selectedDate}
+            onChange={setSelectedDate}
+            className="flex-1 p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholderText="Filter by date"
+            dateFormat="dd MMM yyyy"
+          />
+        </div>
+        
+        <Link href="/CreateBrooze" className="block">
+          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            + Add Record 
+          </button>
+        </Link>
+      </div>
+
+      {/* Records Table */}
+      <div className="w-full max-w-6xl bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              {['Client Name', 'Total Amount', 'Amount Paid', 'Remaining Balance', 'Last Updated', 'Actions'].map((header) => (
+                <th key={header} className="px-6 py-4 text-left text-sm font-medium text-gray-700">
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody>
-            {filteredLoans.length > 0 ? (
-              filteredLoans.map((loan) => (
-                <tr key={loan._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
-                  <td className="px-5 py-4 text-sm">{loan.name}</td>
-                  <td className="px-5 py-4 text-sm text-green-400">${loan.amount}</td>
-                  <td className="px-5 py-4 text-sm text-blue-400">${loan.credit}</td>
-                  <td className="px-5 py-4 text-sm text-red-400">${loan.balance}</td>
-                  <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
-                  <td className="px-5 py-4 text-sm">
-                    <Link href={`/UpdateBrooze/${loan._id}`}>
-                      <button className="text-blue-600 py-1 px-3 rounded-lg mr-2 transition-all">Edit</button>
-                    </Link>
-                    <button onClick={() => handleDelete(loan._id)} className="text-red-500 py-1 px-3 rounded-lg transition-all">Delete</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="px-5 py-4 text-center text-gray-400">No Record found.</td>
+          <tbody className="divide-y divide-gray-200">
+            {filteredLoans.map((loan) => (
+              <tr key={loan._id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm text-gray-900">{loan.name}</td>
+                <td className="px-6 py-4 text-sm text-blue-600 font-medium">${loan.amount.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-green-600">${loan.credit.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-red-600 font-medium">${loan.balance.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {new Date(loan.date).toLocaleDateString('en-GB')}
+                </td>
+                <td className="px-6 py-4 text-sm space-x-2">
+                  <Link href={`/UpdateBrooze/${loan._id}`} className="text-blue-600 hover:text-blue-800">
+                    Edit
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(loan._id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
+        
+        {/* Empty State */}
+        {filteredLoans.length === 0 && (
+          <div className="p-8 text-center text-gray-500">
+            No liability records found
+          </div>
+        )}
       </div>
     </motion.div>
   );
