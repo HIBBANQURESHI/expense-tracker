@@ -15,7 +15,7 @@ const StatCard = ({ title, value, secondaryValue, isAmount = false, colorClass =
   >
     <h3 className="text-sm font-medium text-gray-500 mb-1">{title}</h3>
     <div className={`text-2xl font-semibold ${colorClass}`}>
-      {isAmount && 'Rs. '}{value}
+      {isAmount && 'SAR. '}{value}
       {secondaryValue && (
         <div className="text-sm font-normal text-gray-500 mt-1">
           {secondaryValue}

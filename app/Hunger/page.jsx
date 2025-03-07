@@ -8,7 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-// Dynamically import DatePicker to avoid SSR issues
 const DatePicker = dynamic(() => import("react-datepicker"), { ssr: false });
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -16,21 +15,39 @@ const Expense = () => {
   const [sales, setSales] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [summary, setSummary] = useState({
+    totalDeliveries: 0,
+    totalAmount: 0,
+    totalPaid: 0,
+    totalBalance: 0
+  });
 
   useEffect(() => {
     fetchSales();
+    fetchSummary();
   }, []);
 
   const fetchSales = async () => {
     try {
       const response = await axios.get("http://localhost:4000/api/hunger");
-      if (response.data) {
-        setSales(
-          response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        );
-      }
+      setSales(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     } catch (error) {
       console.error("Error fetching delivery:", error);
+    }
+  };
+
+  const fetchSummary = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/hunger/summary/total");
+      setSummary(response.data);
+    } catch (error) {
+      toast.error("Failed to load summary data");
+      setSummary({
+        totalDeliveries: 0,
+        totalAmount: 0,
+        totalPaid: 0,
+        totalBalance: 0
+      });
     }
   };
 
@@ -59,40 +76,69 @@ const Expense = () => {
   
     return matchesDate;
   });
+
   return (
     <motion.div
-      className="min-h-screen bg-white text-black p-6 flex flex-col items-center"
+      className="min-h-screen bg-gray-50 p-6 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
-      <h1 className="text-4xl font-bold mb-6">Hunger Delivery</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Hunger Delivery Management</h1>
 
-      <div className="flex flex-wrap gap-4 mb-6 w-full max-w-4xl">
-        {/* Search Input */}
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/3 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        {/* Date Picker */}
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          className="w-full md:w-1/3 p-3 rounded-lg bg-white text-black border border-gray-700 focus:outline-none"
-          placeholderText="Select a date"
-        />
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 w-full max-w-6xl">
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Total Deliveries</h3>
+          <p className="mt-2 text-2xl font-semibold text-blue-600">
+            {summary.totalDeliveries}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Total Amount</h3>
+          <p className="mt-2 text-2xl font-semibold text-green-600">
+            ${summary.totalAmount.toFixed(2)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Paid Amount</h3>
+          <p className="mt-2 text-2xl font-semibold text-purple-600">
+            ${summary.totalPaid.toFixed(2)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-600">Pending Balance</h3>
+          <p className="mt-2 text-2xl font-semibold text-red-600">
+            ${summary.totalBalance.toFixed(2)}
+          </p>
+        </div>
       </div>
-      
 
-      <Link href="/CreateHunger">
-        <button className="mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition-all">
-          Create Delivery
-        </button>
-      </Link>
+      {/* Rest of your existing code */}
+      <div className="w-full max-w-6xl mb-6 space-y-4">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Search deliveries..."
+            className="flex-1 p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <DatePicker
+            selected={selectedDate}
+            onChange={setSelectedDate}
+            className="flex-1 p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholderText="Filter by date"
+            dateFormat="dd MMM yyyy"
+          />
+        </div>
+        
+        <Link href="/CreateHunger" className="block">
+          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            + New Delivery Record
+          </button>
+        </Link>
+      </div>
 
       <div className="overflow-hidden rounded-xl shadow-xl w-full max-w-4xl bg-white py-3">
         <table className="min-w-full leading-normal">
@@ -100,6 +146,8 @@ const Expense = () => {
             <tr className="bg-gray-100 text-black">
               <th className="px-5 py-3 text-left text-sm font-semibold">NO. of Delivery</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Amount Paid</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Remaining Balance</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Created At</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Actions</th>
             </tr>
@@ -107,9 +155,11 @@ const Expense = () => {
           <tbody>
             {filteredSales.length > 0 ? (
               filteredSales.map((sale) => (
-                <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
+                <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-600 transition">
                   <td className="px-5 py-4 text-sm">{sale.deliveries}</td>
                   <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
+                  <td className="px-6 py-4 text-sm text-green-600">${sale.paidAmount}</td>
+                  <td className="px-6 py-4 text-sm text-red-600 font-medium">${sale.balance}</td>
                   <td className="px-5 py-4 text-sm">{new Date(sale.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateHunger/${sale._id}`}>

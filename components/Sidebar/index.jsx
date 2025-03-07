@@ -17,17 +17,14 @@ import { GrDeliver, GrMoney } from "react-icons/gr";
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
 
   const Menus = [
     { title: 'Dashboard', icon: <MdDashboard />, path: '/' },
     { title: 'Expense', icon: <MdMoney />, path: '/Expense' },
-    { title: 'Cash Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
-   // { title: 'Card Sale', icon: <MdCreditCard />, path: '/CardSale' },
-    { title: 'Brooze Company', icon: <MdBusiness />, path: '/Brooze' },
-    { title: 'KPMG Company', icon: <MdBusiness />, path: '/Kpmg' },
+    { title: 'Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
     { title: 'Loan', icon: <MdAccountBalance />, path: '/Loan' },
     { title: 'Receiving', icon: <GrMoney />, path: '/Receiving' },
-
   ];
 
   const Deliveries = [
@@ -37,6 +34,11 @@ const Sidebar = () => {
     { title: 'Jahez Delivery', path: '/Jahez' },
     { title: 'Marsool Delivery', path: '/Marsool' },
     { title: 'Ninja Delivery', path: '/Ninja' },
+  ];
+
+  const Companies = [
+    { title: 'Brooze', path: '/Brooze' },
+    { title: 'KPMG', path: '/Kpmg' },
   ];
 
   return (
@@ -86,6 +88,31 @@ const Sidebar = () => {
                       <div className="flex items-center gap-3 p-2 cursor-pointer rounded-md hover:bg-blue-500 transition-all">
                         <span className="text-white text-sm">•</span>
                         {open && <span>{delivery.title}</span>}
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+          
+          <li>
+            <button 
+              onClick={() => setCompanyOpen(!companyOpen)}
+              className="flex items-center w-full gap-3 p-2 rounded-md hover:bg-blue-500 transition-all"
+            >
+              <MdBusiness className="text-white text-lg" />
+              {open && <span>Companies</span>}
+              {open && <MdMenu className={`ml-auto transition-transform ${companyOpen ? 'rotate-180' : ''}`} />}
+            </button>
+            {companyOpen && (
+              <ul className="ml-5 mt-1 space-y-1">
+                {Companies.map((company, index) => (
+                  <li key={index}>
+                    <Link href={company.path}>
+                      <div className="flex items-center gap-3 p-2 cursor-pointer rounded-md hover:bg-blue-500 transition-all">
+                        <span className="text-white text-sm">•</span>
+                        {open && <span>{company.title}</span>}
                       </div>
                     </Link>
                   </li>
