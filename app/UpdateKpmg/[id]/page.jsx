@@ -26,7 +26,7 @@ const UpdateLoan = () => {
 
   const fetchLoanDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/kpmg/${id}`);
+      const response = await axios.get(`https://akc-expense-server.vercel.app/api/kpmg/${id}`);
       const data = response.data;
       setLoan({
         name: data.name,
@@ -60,7 +60,7 @@ const UpdateLoan = () => {
     setLoading(true);
 
     try {
-      await axios.put(`http://localhost:4000/api/kpmg/${id}`, {
+      await axios.put(`https://akc-expense-server.vercel.app/api/kpmg/${id}`, {
         ...loan,
         date: new Date(loan.date)
       });

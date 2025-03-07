@@ -34,7 +34,7 @@ const SaleByCash = () => {
   const fetchSales = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:4000/api/sales');
+      const response = await axios.get('https://akc-expense-server.vercel.app/api/sales');
       if (response.data) {
         setSales(response.data.sort((a, b) => new Date(b.date) - new Date(a.date)));
       }
@@ -50,7 +50,7 @@ const SaleByCash = () => {
     try {
       const today = new Date();
       const response = await axios.get(
-        `http://localhost:4000/api/sales/${today.getFullYear()}/${today.getMonth() + 1}`
+        `https://akc-expense-server.vercel.app/api/sales/${today.getFullYear()}/${today.getMonth() + 1}`
       );
       setMonthlySummary(response.data);
     } catch (error) {

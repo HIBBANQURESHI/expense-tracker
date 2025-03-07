@@ -24,7 +24,7 @@ const UpdateExpense = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:4000/api/keeta/${id}`);
+      const { data } = await axios.get(`https://akc-expense-server.vercel.app/api/keeta/${id}`);
       setSale({
         ...data,
         date: new Date(data.date).toISOString().split('T')[0]
@@ -52,7 +52,7 @@ const UpdateExpense = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:4000/api/keeta/${id}`, {
+      await axios.put(`https://akc-expense-server.vercel.app/api/keeta/${id}`, {
         ...sale,
         balance: sale.amount - sale.paidAmount
       });
