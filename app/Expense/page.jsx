@@ -97,19 +97,19 @@ const Expense = () => {
           <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-blue-600">Cash Expenses</h3>
             <p className="mt-2 text-2xl font-semibold text-blue-700">
-              ${monthlySummary.cash.toFixed(2)}
+              SAR.{monthlySummary.cash.toFixed(2)}
             </p>
           </div>
           <div className="bg-green-50 p-4 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-green-600">Card Expenses</h3>
             <p className="mt-2 text-2xl font-semibold text-green-700">
-              ${monthlySummary.card.toFixed(2)}
+              SAR.{monthlySummary.card.toFixed(2)}
             </p>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-purple-600">Monthly Total</h3>
             <p className="mt-2 text-2xl font-semibold text-purple-700">
-              ${monthlySummary.total.toFixed(2)}
+              SAR.{monthlySummary.total.toFixed(2)}
             </p>
           </div>
         </div>
@@ -182,7 +182,7 @@ const Expense = () => {
                   <tr key={sale._id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-4 py-3.5 text-sm text-gray-700">{sale.name}</td>
                     <td className="px-4 py-3.5 text-sm text-gray-600">{sale.description}</td>
-                    <td className="px-4 py-3.5 text-sm font-medium text-red-600">${sale.amount}</td>
+                    <td className="px-4 py-3.5 text-sm font-medium text-red-600">SAR.{sale.amount}</td>
                     <td className="px-4 py-3.5">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         sale.paymentMethod === 'cash' 

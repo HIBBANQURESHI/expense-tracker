@@ -97,19 +97,19 @@ const Expense = () => {
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Total Amount</h3>
           <p className="mt-2 text-2xl font-semibold text-green-600">
-            ${summary.totalAmount.toFixed(2)}
+            SAR.{summary.totalAmount.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Paid Amount</h3>
           <p className="mt-2 text-2xl font-semibold text-purple-600">
-            ${summary.totalPaid.toFixed(2)}
+            SAR.{summary.totalPaid.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Pending Balance</h3>
           <p className="mt-2 text-2xl font-semibold text-red-600">
-            ${summary.totalBalance.toFixed(2)}
+            SAR.{summary.totalBalance.toFixed(2)}
           </p>
         </div>
       </div>
@@ -157,9 +157,9 @@ const Expense = () => {
               filteredSales.map((sale) => (
                 <tr key={sale._id} className="border-b border-gray-700 hover:bg-gray-600 transition">
                   <td className="px-5 py-4 text-sm">{sale.deliveries}</td>
-                  <td className="px-5 py-4 text-sm text-green-700">${sale.amount}</td>
-                  <td className="px-6 py-4 text-sm text-green-600">${sale.paidAmount}</td>
-                  <td className="px-6 py-4 text-sm text-red-600 font-medium">${sale.balance}</td>
+                  <td className="px-5 py-4 text-sm text-green-700">SAR.{sale.amount}</td>
+                  <td className="px-6 py-4 text-sm text-green-600">SAR.{sale.paidAmount}</td>
+                  <td className="px-6 py-4 text-sm text-red-600 font-medium">SAR.{sale.balance}</td>
                   <td className="px-5 py-4 text-sm">{new Date(sale.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateHunger/${sale._id}`}>

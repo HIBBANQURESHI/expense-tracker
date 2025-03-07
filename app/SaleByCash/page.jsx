@@ -123,7 +123,7 @@ const SaleByCash = () => {
         <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-blue-600">Cash Sales</h3>
           <p className="mt-2 text-2xl font-semibold text-blue-700">
-            ${monthlySummary.cashAmount?.toFixed(2) || '0.00'}
+            SAR.{monthlySummary.cashAmount?.toFixed(2) || '0.00'}
           </p>
           <div className="mt-2 text-xs text-blue-600">
             {monthlySummary.cashSales} transactions
@@ -134,7 +134,7 @@ const SaleByCash = () => {
         <div className="bg-green-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-green-600">Card Sales</h3>
           <p className="mt-2 text-2xl font-semibold text-green-700">
-            ${monthlySummary.cardAmount?.toFixed(2) || '0.00'}
+            SAR.{monthlySummary.cardAmount?.toFixed(2) || '0.00'}
           </p>
           <div className="mt-2 text-xs text-green-600">
             {monthlySummary.cardSales} transactions
@@ -145,7 +145,7 @@ const SaleByCash = () => {
         <div className="bg-purple-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-purple-600">Monthly Total</h3>
           <p className="mt-2 text-2xl font-semibold text-purple-700">
-            ${monthlySummary.totalAmount?.toFixed(2) || '0.00'}
+            SAR.{monthlySummary.totalAmount?.toFixed(2) || '0.00'}
           </p>
           <div className="mt-2 text-xs text-purple-600">
             {monthlySummary.totalSales} total transactions
@@ -202,10 +202,10 @@ const SaleByCash = () => {
             
             <div className="text-right">
               <p className="text-sm font-semibold text-blue-800">
-                Grand Total: ${totals.grandTotal.toFixed(2)}
+                Grand Total: SAR.{totals.grandTotal.toFixed(2)}
               </p>
               <p className="text-xs text-blue-700 mt-1">
-                Cash: ${totals.grandCashTotal.toFixed(2)} | Card: ${totals.grandCardTotal.toFixed(2)}
+                Cash: SAR.{totals.grandCashTotal.toFixed(2)} | Card: SAR.{totals.grandCardTotal.toFixed(2)}
               </p>
             </div>
           </div>
@@ -217,9 +217,9 @@ const SaleByCash = () => {
                 <div key={name} className="flex justify-between text-xs text-blue-700 mt-1">
                   <span>{name}:</span>
                   <span>
-                    ${totals.total.toFixed(2)} (
-                    <span className="text-blue-600">C:${totals.cash.toFixed(2)}</span>, 
-                    <span className="text-green-600"> D:${totals.card.toFixed(2)}</span>)
+                    SAR.{totals.total.toFixed(2)} (
+                    <span className="text-blue-600">C:SAR.{totals.cash.toFixed(2)}</span>, 
+                    <span className="text-green-600"> D:SAR.{totals.card.toFixed(2)}</span>)
                   </span>
                 </div>
               ))}
@@ -259,7 +259,7 @@ const SaleByCash = () => {
                       <td className="px-4 py-3 text-sm text-gray-800">{sale.name}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{sale.description}</td>
                       <td className="px-4 py-3 text-sm font-medium text-green-600">
-                        ${sale.amount.toFixed(2)}
+                        SAR.{sale.amount.toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-sm">
                         <span className={`px-2 py-1 rounded-full text-xs ${

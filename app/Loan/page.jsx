@@ -109,9 +109,9 @@ const LoanList = () => {
               filteredLoans.map((loan) => (
                 <tr key={loan._id} className="border-b border-gray-700 hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{loan.name}</td>
-                  <td className="px-5 py-4 text-sm text-green-400">${loan.amount}</td>
-                  <td className="px-5 py-4 text-sm text-blue-400">${loan.received}</td>
-                  <td className="px-5 py-4 text-sm text-red-400">${loan.remaining}</td>
+                  <td className="px-5 py-4 text-sm text-green-400">SAR.{loan.amount}</td>
+                  <td className="px-5 py-4 text-sm text-blue-400">SAR.{loan.received}</td>
+                  <td className="px-5 py-4 text-sm text-red-400">SAR.{loan.remaining}</td>
                   <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">
                     <Link href={`/UpdateLoan/${loan._id}`}>

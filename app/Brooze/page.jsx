@@ -94,19 +94,19 @@ const LoanList = () => {
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Remaining balance</h3>
           <p className="mt-2 text-2xl font-semibold text-red-600">
-            ${summary.totalBalance.toFixed(2)}
+            SAR.{summary.totalBalance.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Total Amount</h3>
           <p className="mt-2 text-2xl font-semibold text-blue-600">
-            ${summary.totalAmount.toFixed(2)}
+            SAR.{summary.totalAmount.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-600">Paid Amount</h3>
           <p className="mt-2 text-2xl font-semibold text-green-600">
-            ${summary.totalCredit.toFixed(2)}
+            SAR.{summary.totalCredit.toFixed(2)}
           </p>
         </div>
       </div>
@@ -153,9 +153,9 @@ const LoanList = () => {
             {filteredLoans.map((loan) => (
               <tr key={loan._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 text-sm text-gray-900">{loan.name}</td>
-                <td className="px-6 py-4 text-sm text-blue-600 font-medium">${loan.amount.toFixed(2)}</td>
-                <td className="px-6 py-4 text-sm text-green-600">${loan.credit.toFixed(2)}</td>
-                <td className="px-6 py-4 text-sm text-red-600 font-medium">${loan.balance.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-blue-600 font-medium">SAR.{loan.amount.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-green-600">SAR.{loan.credit.toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm text-red-600 font-medium">SAR.{loan.balance.toFixed(2)}</td>
                 <td className="px-6 py-4 text-sm text-gray-500">
                   {new Date(loan.date).toLocaleDateString('en-GB')}
                 </td>
