@@ -93,6 +93,17 @@ const SaleByCash = () => {
     });
   };
 
+  const handleDelete = async (id) => {
+      try {
+        await axios.delete(`https://akc-expense-server.vercel.app/api/sales/${id}`);
+        toast.success("Sale record deleted successfully");
+        fetchSales();
+        fetchMonthlySummary();
+      } catch (error) {
+        toast.error("Error deleting sale record");
+      }
+    };
+
   // Filter logic
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
