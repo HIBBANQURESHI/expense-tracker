@@ -386,9 +386,7 @@ const Home = () => {
       try {
         const responses = await Promise.all([
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}`),
-          fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/expense/monthly-summary/${year}/${month}`), 
           fetch(`https://akc-expense-server.vercel.app/api/expense/daily-summary/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}`),
