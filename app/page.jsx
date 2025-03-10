@@ -386,9 +386,7 @@ const Home = () => {
       try {
         const responses = await Promise.all([
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}`),
-          fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}`),
           fetch(`https://akc-expense-server.vercel.app/api/sales/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/cardsale/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/expense/monthly-summary/${year}/${month}`), 
           fetch(`https://akc-expense-server.vercel.app/api/expense/daily-summary/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/brooze/${year}/${month}`),
@@ -407,45 +405,57 @@ const Home = () => {
           fetch(`https://akc-expense-server.vercel.app/api/marsool/${year}/${month}/${day}`),
           fetch(`https://akc-expense-server.vercel.app/api/ninja/${year}/${month}`), 
           fetch(`https://akc-expense-server.vercel.app/api/ninja/${year}/${month}/${day}`),
-          fetch(`https://akc-expense-server.vercel.app/api/loan`),
-          fetch(`https://akc-expense-server.vercel.app/api/loan`),
-          fetch(`https://akc-expense-server.vercel.app/api/receiving`),
-          fetch(`https://akc-expense-server.vercel.app/api/receiving`)
+          fetch(`https://akc-expense-server.vercel.app/api/loan/${year}/${month}`),
+          fetch(`https://akc-expense-server.vercel.app/api/loan/${year}/${month}/${day}`),
+          fetch(`https://akc-expense-server.vercel.app/api/receiving/${year}/${month}`),
+          fetch(`https://akc-expense-server.vercel.app/api/receiving/${year}/${month}/${day}`),
         ]);
 
         const data = await Promise.all(responses.map(res => res.ok ? res.json() : {}));
+        const monthlySalesData = data[0];
+        const dailySalesData = data[1]; 
 
         // Update state with fetched data
-        setCashSales(data[0]);
-        setCardSales(data[1]);
-        setDailySales(data[2]);
-        setDailyCardSales(data[3]);
-        setMonthlyExpense(data[4]);
-        setDailyExpense(data[5]);
-        setMonthlyBrooze(data[6]);
-        setDailyBrooze(data[7]);
-        setMonthlyKpmg(data[8]);
-        setDailyKpmg(data[9]);
-        setMonthlyDeliveries(data[10]);
-        setDailyDeliveries(data[11]);
-        setMonthlyHunger(data[12]);
-        setDailyHunger(data[13]);
-        setMonthlyNoon(data[14]);
-        setDailyNoon(data[15]);
-        setMonthlyJahez(data[16]);
-        setDailyJahez(data[17]);
-        setMonthlyMarsool(data[18]);
-        setDailyMarsool(data[19]);
-        setMonthlyNinja(data[20]);
-        setDailyNinja(data[21]);
-        setMonthlyLoan(data[22]);
-        setDailyLoan(data[23]);
-        setMonthlyReceiving(data[24]);
-        setDailyReceiving(data[25]);
-        console.log("monthlyReceiving:", data[24]);
-        console.log("dailyReceiving:", data[25]);
-
-
+        setCashSales({
+          totalSales: monthlySalesData.cashSales,
+          totalAmount: monthlySalesData.cashAmount
+        });
+        setCardSales({
+          totalSales: monthlySalesData.cardSales,
+          totalAmount: monthlySalesData.cardAmount
+        });
+        setDailySales({
+          totalSales: dailySalesData.totalSales,
+          totalAmount: dailySalesData.totalAmount
+        });
+        // Update daily card sales from daily sales data
+        setDailyCardSales({
+          totalSales: dailySalesData.cardSales,
+          totalAmount: dailySalesData.cardAmount
+        });
+        console.log('Daily sales data:', dailySalesData);
+        setMonthlyExpense(data[2]);
+        setDailyExpense(data[3]);
+        setMonthlyBrooze(data[4]);
+        setDailyBrooze(data[5]);
+        setMonthlyKpmg(data[6]);
+        setDailyKpmg(data[7]);
+        setMonthlyDeliveries(data[8]);
+        setDailyDeliveries(data[9]);
+        setMonthlyHunger(data[10]);
+        setDailyHunger(data[11]);
+        setMonthlyNoon(data[12]);
+        setDailyNoon(data[13]);
+        setMonthlyJahez(data[14]);
+        setDailyJahez(data[15]);
+        setMonthlyMarsool(data[16]);
+        setDailyMarsool(data[17]);
+        setMonthlyNinja(data[18]);
+        setDailyNinja(data[19]);
+        setMonthlyLoan(data[20]);
+        setDailyLoan(data[21]);
+        setMonthlyReceiving(data[22]);
+        setDailyReceiving(data[23]);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
