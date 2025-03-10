@@ -285,7 +285,7 @@ const SaleByCash = () => {
                         {new Date(sale.date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm space-x-2">
-                        <Link href={`/UpdateSale/${sale._id}`}>
+                        <Link href={`/SaleByCash/${sale._id}`}>
                           <button className="text-blue-600 hover:text-blue-800">
                             Edit
                           </button>
