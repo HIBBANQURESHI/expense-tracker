@@ -293,7 +293,7 @@ const SaleByCash = () => {
                         className="text-blue-600 hover:text-blue-800"
                         onClick={() => {
                           console.log('Navigating to ID:', sale._id);
-                          router.push(`/SaleByCash/${sale._id}`);
+                          router.push(`/SaleByCash/${encodeURIComponent(sale._id)}`);
                         }}
                       >
                          Edit
