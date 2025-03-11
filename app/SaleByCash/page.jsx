@@ -289,17 +289,9 @@ const SaleByCash = () => {
                         {new Date(sale.date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm space-x-2">
-                      // Update the edit button click handler
                         <button
                           onClick={() => {
-                            // Add explicit URL encoding and validation
-                            const saleId = encodeURIComponent(sale._id);
-                            
-                            if (!saleId || !mongoose.Types.ObjectId.isValid(saleId)) {
-                              toast.error("Invalid sale ID");
-                              return;
-                            }
-                            
+                            const saleId = encodeURIComponent(sale._id);                            
                             router.push(`/SaleByCash/${saleId}`);
                           }}
                           className="text-blue-600 hover:text-blue-800"
