@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
 
 const DatePicker = dynamic(() => import('react-datepicker'), { ssr: false });
 import 'react-datepicker/dist/react-datepicker.css';
@@ -118,6 +119,9 @@ const SaleByCash = () => {
   });
 
   const totals = calculateTotals();
+
+  
+  const router = useRouter();
 
   return (
     <motion.div 
@@ -285,11 +289,12 @@ const SaleByCash = () => {
                         {new Date(sale.date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm space-x-2">
-                        <Link href={`SaleByCash/${sale._id}`}>
-                          <button className="text-blue-600 hover:text-blue-800">
-                            Edit
-                          </button>
-                        </Link>
+                      <button
+                        className="text-blue-600 hover:text-blue-800"
+                         onClick={() => router.push(`/SaleByCash/${sale._id}`)}
+                      >
+                         Edit
+                      </button>
                         <button 
                           onClick={() => handleDelete(sale._id, sale.name)}
                           className="text-red-600 hover:text-red-800"
