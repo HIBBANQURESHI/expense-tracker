@@ -1,46 +1,43 @@
 'use client';
-
-import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ 
-    name: '', 
-    description: '', 
-    amount: '', 
-    date: new Date().toISOString().split('T')[0], // Default to today's date
-    paymentMethod: 'cash' 
-  });
   const { id } = useParams();
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      fetchSaleDetails();
-    }
+    const fetchSale = async () => {
+      try {
+          const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${encodeURIComponent(id)}`);
+          
+          if (!response.data.success) {
+              throw new Error(response.data.error);
+          }
+  
+          setSale({
+              ...response.data.data,
+              date: new Date(response.data.data.date).toISOString().split('T')[0]
+          });
+          
+      } catch (error) {
+          console.error('Error:', error);
+          toast.error(error.message);
+          router.push('/SaleByCash');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (id) fetchSale();
   }, [id]);
 
-  const fetchSaleDetails = async () => {
-    try {
-      const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${id}`);
-      if (response.data) {
-        // Format date for input field
-        const formattedDate = new Date(response.data.date).toISOString().split('T')[0];
-        setSale({
-          ...response.data,
-          date: formattedDate
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching sale details:', error);
-      toast.error('Failed to fetch sale details');
-      router.push('/SaleByCash'); // Redirect to sales list on error
-    }
-  };
+  if (loading) {
+    return <div className="text-center p-8">Loading sale data...</div>;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
