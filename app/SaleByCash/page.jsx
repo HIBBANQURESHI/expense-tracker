@@ -291,7 +291,10 @@ const SaleByCash = () => {
                       <td className="px-4 py-3 text-sm space-x-2">
                       <button
                         className="text-blue-600 hover:text-blue-800"
-                         onClick={() => router.push(`/SaleByCash/${sale._id}`)}
+                        onClick={() => {
+                          console.log('Navigating to ID:', sale._id);
+                          router.push(`/SaleByCash/${sale._id}`);
+                        }}
                       >
                          Edit
                       </button>
