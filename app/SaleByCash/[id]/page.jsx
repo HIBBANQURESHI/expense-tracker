@@ -4,6 +4,13 @@ import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+// Add this useEffect at the top of your UpdateSale component
+useEffect(() => {
+  if (typeof window !== 'undefined' && !window.location.search.includes('t=')) {
+    window.location.href = `${window.location.href}?t=${Date.now()}`;
+  }
+}, []);
+
 const UpdateSale = () => {
   const { id } = useParams();
   const router = useRouter();
@@ -43,7 +50,7 @@ const UpdateSale = () => {
 
   if (loading) {
     return <div className="p-8 text-center">Loading sale data...</div>;
-  }
+  } 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
