@@ -292,7 +292,7 @@ const SaleByCash = () => {
                         <button
                           onClick={() => {
                             const saleId = encodeURIComponent(sale._id);                            
-                            router.push(`/SaleByCash/${saleId}`);
+                            router.push(`/SaleByCash/${saleId}?t=${Date.now()}`);
                           }}
                           className="text-blue-600 hover:text-blue-800"
                         >

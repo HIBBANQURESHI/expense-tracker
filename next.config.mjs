@@ -1,16 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Add this configuration
   experimental: {
     missingSuspenseWithCSRBailout: false,
+    taint: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  async headers() {
+    return [
+      {
+        source: '/SaleByCash/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0, must-revalidate',
+          },
+        ],
+      },
+    ];
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  generateBuildId: () => process.env.BUILD_ID || Date.now().toString(),
 };
 
 export default nextConfig;

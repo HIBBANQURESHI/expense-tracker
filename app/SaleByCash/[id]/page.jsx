@@ -1,42 +1,48 @@
 'use client';
-import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const UpdateSale = () => {
   const { id } = useParams();
   const router = useRouter();
+  const [sale, setSale] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSale = async () => {
+    let isMounted = true;
+    const fetchData = async () => {
       try {
-          const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${encodeURIComponent(id)}`);
-          
-          if (!response.data.success) {
-              throw new Error(response.data.error);
-          }
-  
-          setSale({
-              ...response.data.data,
-              date: new Date(response.data.data.date).toISOString().split('T')[0]
-          });
-          
+        const response = await axios.get(
+          `/api/sales/${encodeURIComponent(id)}?t=${Date.now()}`
+        );
+        
+        if (!isMounted) return;
+        
+        if (response.data.error) {
+          throw new Error(response.data.error);
+        }
+
+        setSale({
+          ...response.data,
+          date: new Date(response.data.date).toISOString().split('T')[0]
+        });
       } catch (error) {
-          console.error('Error:', error);
-          toast.error(error.message);
-          router.push('/SaleByCash');
+        console.error('Failed to load sale:', error);
+        toast.error(error.message);
+        router.push('/SaleByCash');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
-    
-    if (id) fetchSale();
+
+    if (id) fetchData();
+    return () => { isMounted = false; };
   }, [id]);
 
   if (loading) {
-    return <div className="text-center p-8">Loading sale data...</div>;
+    return <div className="p-8 text-center">Loading sale data...</div>;
   }
 
   const handleChange = (e) => {
