@@ -61,3 +61,11 @@ html {
 .bg-secondary {
   background-color: var(--secondary);
 }
+/* Add to existing styles */
+.shadow-sm {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}

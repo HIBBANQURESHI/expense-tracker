@@ -13,6 +13,8 @@ import {
   MdMoney,
 } from 'react-icons/md';
 import { GrDeliver, GrMoney } from "react-icons/gr";
+import { BsFillFileSpreadsheetFill } from "react-icons/bs";
+
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
@@ -25,6 +27,8 @@ const Sidebar = () => {
     { title: 'Sale', icon: <MdOutlineAttachMoney />, path: '/SaleByCash' },
     { title: 'Loan', icon: <MdAccountBalance />, path: '/Loan' },
     { title: 'Receiving', icon: <GrMoney />, path: '/Receiving' },
+    { title: 'Cash Balance', icon: <BsFillFileSpreadsheetFill />, path: '/BalanceSheet' },
+    { title: 'Card Balance', icon: <BsFillFileSpreadsheetFill />, path: '/Receiving' },
   ];
 
   const Deliveries = [

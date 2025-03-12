@@ -8,8 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ name: '', description: '', amount: 0, received: 0, remaining: 0, date:'' });
-  const [loading, setLoading] = useState(false);
+  const [sale, setSale] = useState({ name: '', description: '', amount: '', date: '' });
   const { id } = useParams();
   const router = useRouter();
 
@@ -21,50 +20,42 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/loan/${id}`);
+      const response = await axios.get(`http://localhost:4000/api/sales/${id}`);
       if (response.data) {
         setSale({
-          name: response.data.name || '',
-          description: response.data.description || '',
-          amount: response.data.amount || 0,
-          received: response.data.received || 0,
-          remaining: response.data.remaining || (response.data.amount - response.data.received) || 0,
-          date: response.data.date ? new Date(response.data.date).toISOString().split('T')[0] : ''
-
+          ...response.data,
+          date: response.data.date ? formatDate(response.data.date) : '', // Format date for input
         });
       }
     } catch (error) {
       console.error('Error fetching sale details:', error);
-      toast.error('Failed to fetch sale details');
     }
+  };
+
+  // Function to format the date to MM/DD/YYYY
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let updatedSale = { ...sale, [name]: name === 'amount' || name === 'received' ? parseFloat(value) || 0 : value };
-
-    // Automatically calculate remaining balance
-    if (name === 'amount' || name === 'received') {
-      updatedSale.remaining = Number(updatedSale.amount - updatedSale.received);
-    }
-
-    setSale(updatedSale);
+    setSale({ ...sale, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return;
-    setLoading(true);
-
     try {
-      await axios.put(`http://localhost:4000/api/loan/${id}`, sale);
-      toast.success('Sale updated successfully!');
-      router.push('/Loan');
+      const formattedSale = {
+        ...sale,
+        date: new Date(sale.date).toISOString(), // Convert to ISO format for backend
+      };
+      await axios.put(`http://localhost:4000/api/sales/${id}`, formattedSale);
+      toast.success('Sale updated successfully');
+      router.push('/SaleByCash');
     } catch (error) {
-      console.error('Error updating sale:', error.response?.data || error.message);
-      toast.error(error.response?.data?.message || 'Error updating sale');
-    } finally {
-      setLoading(false);
+      console.error('Error updating sale:', error);
+      toast.error('Error updating sale');
     }
   };
 
@@ -92,6 +83,7 @@ const UpdateSale = () => {
               name="description" 
               value={sale.description} 
               onChange={handleChange} 
+              required 
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter description"
             />
@@ -109,47 +101,21 @@ const UpdateSale = () => {
             />
           </div>
           <div>
-            <label htmlFor="received" className="block text-sm font-medium">Received</label>
-            <input 
-              type="number" 
-              name="received" 
-              value={sale.received} 
-              onChange={handleChange} 
-              required 
-              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter received amount"
-            />
-          </div>
-          <div>
-            <label htmlFor="remaining" className="block text-sm font-medium">Remaining</label>
-            <input 
-              type="number" 
-              name="remaining" 
-              value={sale.remaining} 
-              disabled
-              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-            />
-          </div>
-
-          <div>
             <label htmlFor="date" className="block text-sm font-medium">Date</label>
-            <input 
-              type="date" 
-              name="date" 
-              value={sale.date} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="text"
+              name="date"
+              value={sale.date}
+              onChange={handleChange}
+              required
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="MM/DD/YYYY"
             />
           </div>
           <button 
             type="submit" 
-            className={`w-full py-2 px-4 rounded-lg transition-all duration-200 text-white font-semibold ${
-              loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-            }`}
-            disabled={loading}
-          >
-            {loading ? 'Updating...' : 'Update Sale'}
+            className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 text-white font-semibold">
+            Update Sale
           </button>
         </form>
       </div>

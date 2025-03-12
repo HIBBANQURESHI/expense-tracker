@@ -40,7 +40,7 @@ const CreateExpense = () => {
     }
 
     try {
-      await axios.post('https://akc-expense-server.vercel.app/api/keeta', {
+      await axios.post('http://localhost:4000/api/keeta', {
         ...sale,
         balance: sale.amount - sale.paidAmount
       });

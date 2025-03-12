@@ -40,7 +40,7 @@ const CreateExpense = () => {
     }
 
     try {
-      await axios.post('https://akc-expense-server.vercel.app/api/ninja', {
+      await axios.post('http://localhost:4000/api/ninja', {
         ...sale,
         balance: sale.amount - sale.paidAmount
       });

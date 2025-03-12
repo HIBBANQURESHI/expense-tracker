@@ -29,7 +29,7 @@ const Expense = () => {
 
   const fetchSales = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/expense");
+      const response = await axios.get("http://localhost:4000/api/expense");
       if (response.data) {
         setSales(
           response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -44,7 +44,7 @@ const Expense = () => {
     try {
       const today = new Date();
       const response = await axios.get(
-        `https://akc-expense-server.vercel.app/api/expense/monthly-summary/${today.getFullYear()}/${today.getMonth() + 1}`
+        `http://localhost:4000/api/expense/monthly-summary/${today.getFullYear()}/${today.getMonth() + 1}`
       );
       setMonthlySummary(response.data);
     } catch (error) {
@@ -54,7 +54,7 @@ const Expense = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/expense/${id}`);
+      await axios.delete(`http://localhost:4000/api/expense/${id}`);
       toast.success("Expense record deleted successfully");
       fetchSales();
       fetchMonthlySummary(); // Refresh monthly summary after deletion

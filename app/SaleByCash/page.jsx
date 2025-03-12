@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from "next/navigation";
 
 const DatePicker = dynamic(() => import('react-datepicker'), { ssr: false });
 import 'react-datepicker/dist/react-datepicker.css';
@@ -35,7 +34,7 @@ const SaleByCash = () => {
   const fetchSales = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('https://akc-expense-server.vercel.app/api/sales');
+      const response = await axios.get('http://localhost:4000/api/sales');
       if (response.data) {
         setSales(response.data.sort((a, b) => new Date(b.date) - new Date(a.date)));
       }
@@ -51,7 +50,7 @@ const SaleByCash = () => {
     try {
       const today = new Date();
       const response = await axios.get(
-        `https://akc-expense-server.vercel.app/api/sales/${today.getFullYear()}/${today.getMonth() + 1}`
+        `http://localhost:4000/api/sales/${today.getFullYear()}/${today.getMonth() + 1}`
       );
       setMonthlySummary(response.data);
     } catch (error) {
@@ -94,22 +93,11 @@ const SaleByCash = () => {
     });
   };
 
-  const handleDelete = async (id) => {
-      try {
-        await axios.delete(`https://akc-expense-server.vercel.app/api/sales/${id}`);
-        toast.success("Sale record deleted successfully");
-        fetchSales();
-        fetchMonthlySummary();
-      } catch (error) {
-        toast.error("Error deleting sale record");
-      }
-    };
-
   // Filter logic
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
     const matchesDate = selectedDate 
-      ? new Date(sale.date).toISOString().split("T")[0] === new Date(selectedDate).toISOString().split("T")[0]
+      ? new Date(sale.date).toLocaleDateString().split("T")[0] === new Date(selectedDate).toLocaleDateString().split("T")[0]
       : true;
     const matchesPayment = paymentFilter === 'all' 
       ? true 
@@ -120,9 +108,16 @@ const SaleByCash = () => {
 
   const totals = calculateTotals();
 
-  
-  const router = useRouter();
-
+  const handleDelete = async (id) => {
+      try {
+        await axios.delete(`http://localhost:4000/api/sales/${id}`);
+        toast.success("Sale record deleted successfully");
+        fetchSales();
+        fetchMonthlySummary(); // Refresh monthly summary after deletion
+      } catch (error) {
+        toast.error("Error deleting sale record");
+      }
+    };
   return (
     <motion.div 
       className="min-h-screen bg-white p-4 sm:p-6 flex flex-col items-center max-w-5xl mx-auto"
@@ -289,15 +284,11 @@ const SaleByCash = () => {
                         {new Date(sale.date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm space-x-2">
-                        <button
-                          onClick={() => {
-                            const saleId = encodeURIComponent(sale._id);                            
-                            router.push(`/SaleByCash/${saleId}?t=${Date.now()}`);
-                          }}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          Edit
-                        </button>
+                        <Link href={`/UpdateSale/${sale._id}`}>
+                          <button className="text-blue-600 hover:text-blue-800">
+                            Edit
+                          </button>
+                        </Link>
                         <button 
                           onClick={() => handleDelete(sale._id, sale.name)}
                           className="text-red-600 hover:text-red-800"

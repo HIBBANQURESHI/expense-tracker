@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateSale = () => {
-  const [sale, setSale] = useState({ name: '',amount: 0, date:'' });
+  const [sale, setSale] = useState({ name: '', description:'', amount: 0, date:'' });
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const router = useRouter();
@@ -21,7 +21,7 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`https://akc-expense-server.vercel.app/api/receiving/${id}`);
+      const response = await axios.get(`http://localhost:4000/api/receiving/${id}`);
       if (response.data) {
         setSale({
           name: response.data.name || '',
@@ -52,7 +52,7 @@ const UpdateSale = () => {
     setLoading(true);
 
     try {
-      await axios.put(`https://akc-expense-server.vercel.app/api/receiving/${id}`, sale);
+      await axios.put(`http://localhost:4000/api/receiving/${id}`, sale);
       toast.success('Sale updated successfully!');
       router.push('/Receiving');
     } catch (error) {
@@ -78,6 +78,18 @@ const UpdateSale = () => {
               required 
               className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter name"
+            />
+          </div>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium">description</label>
+            <input 
+              type="text" 
+              name="description" 
+              value={sale.description} 
+              onChange={handleChange} 
+              required 
+              className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter description"
             />
           </div>
           <div>

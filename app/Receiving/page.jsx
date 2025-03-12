@@ -23,7 +23,7 @@ const LoanList = () => {
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/receiving");
+      const response = await axios.get("http://localhost:4000/api/receiving");
       if (response.data) {
         setLoans(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       }
@@ -34,7 +34,7 @@ const LoanList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/receiving/${id}`);
+      await axios.delete(`http://localhost:4000/api/receiving/${id}`);
       toast.success("Loan deleted successfully");
       fetchLoans();
     } catch (error) {
@@ -97,6 +97,7 @@ const LoanList = () => {
           <thead>
             <tr className="bg-gray-100 text-black">
               <th className="px-5 py-3 text-left text-sm font-semibold">Name</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">Description</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Amount</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Created At</th>
               <th className="px-5 py-3 text-left text-sm font-semibold">Actions</th>
@@ -107,6 +108,7 @@ const LoanList = () => {
               filteredLoans.map((loan) => (
                 <tr key={loan._id} className="border-b border-black hover:bg-gray-100 transition">
                   <td className="px-5 py-4 text-sm">{loan.name}</td>
+                  <td className="px-5 py-4 text-sm">{loan.description}</td>
                   <td className="px-5 py-4 text-sm text-green-700">SAR.{loan.amount}</td>
                   <td className="px-5 py-4 text-sm">{new Date(loan.date).toDateString()}</td>
                   <td className="px-5 py-4 text-sm">

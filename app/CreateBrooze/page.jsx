@@ -46,7 +46,7 @@ const CreateLoan = () => {
     }
 
     try {
-      await axios.post("https://akc-expense-server.vercel.app/api/brooze", {
+      await axios.post("http://localhost:4000/api/brooze", {
         ...loan,
         amount: parseFloat(loan.amount),
         credit: parseFloat(loan.credit),

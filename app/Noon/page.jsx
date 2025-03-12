@@ -29,7 +29,7 @@ const Expense = () => {
 
   const fetchSales = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/noon");
+      const response = await axios.get("http://localhost:4000/api/noon");
       setSales(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     } catch (error) {
       console.error("Error fetching delivery:", error);
@@ -38,7 +38,7 @@ const Expense = () => {
 
   const fetchSummary = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/noon/summary/total");
+      const response = await axios.get("http://localhost:4000/api/noon/summary/total");
       setSummary(response.data);
     } catch (error) {
       toast.error("Failed to load summary data");
@@ -53,7 +53,7 @@ const Expense = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/noon/${id}`);
+      await axios.delete(`http://localhost:4000/api/noon/${id}`);
       toast.success("delivery deleted successfully");
       fetchSales();
     } catch (error) {

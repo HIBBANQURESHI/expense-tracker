@@ -29,7 +29,7 @@ const LoanList = () => {
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze");
+      const response = await axios.get("http://localhost:4000/api/brooze");
       const sortedLoans = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
       setLoans(sortedLoans);
     } catch (error) {
@@ -39,7 +39,7 @@ const LoanList = () => {
 
   const fetchSummary = async () => {
     try {
-      const response = await axios.get("https://akc-expense-server.vercel.app/api/brooze/summary/total");
+      const response = await axios.get("http://localhost:4000/api/brooze/summary/total");
       setSummary(response.data);
     } catch (error) {
       console.error("Error fetching summary:", error);
@@ -54,7 +54,7 @@ const LoanList = () => {
   };
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://akc-expense-server.vercel.app/api/brooze/${id}`);
+      await axios.delete(`http://localhost:4000/api/brooze/${id}`);
       toast.success("Loan deleted successfully");
       fetchLoans();
     } catch (error) {

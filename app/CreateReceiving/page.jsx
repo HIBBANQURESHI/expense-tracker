@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const CreateLoan = () => {
   const [loan, setLoan] = useState({
     name: '',
+    description:'',
     amount: '',
     date:''
   });
@@ -43,7 +44,7 @@ const CreateLoan = () => {
     console.log("Sending Data:", loan); // Debugging
     
     try {
-      const response = await axios.post("https://akc-expense-server.vercel.app/api/receiving", loan, {
+      const response = await axios.post("http://localhost:4000/api/receiving", loan, {
         headers: { "Content-Type": "application/json" },
       });
   
@@ -72,6 +73,22 @@ const CreateLoan = () => {
               value={loan.name}
               onChange={handleChange}
               placeholder="Enter name"
+              className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              required
+            />
+          </div>
+
+          {/* description */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300">
+            Description
+            </label>
+            <input
+              type="text"
+              name="description"
+              value={loan.description}
+              onChange={handleChange}
+              placeholder="Enter description"
               className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               required
             />
