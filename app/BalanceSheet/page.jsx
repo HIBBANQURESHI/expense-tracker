@@ -1,7 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import DatePicker from 'react-datepicker';
@@ -11,6 +9,7 @@ const BalanceSheet = () => {
   const [balanceData, setBalanceData] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [editData, setEditData] = useState({ model: null, id: null, field: '', value: '' });
+  const [newOpening, setNewOpening] = useState('');
 
   const fetchBalance = async (date) => {
     try {
@@ -18,7 +17,7 @@ const BalanceSheet = () => {
       const data = await response.json();
       setBalanceData(data);
     } catch (error) {
-      console.error('Error fetching balance:', error);
+      console.error('Error:', error);
     }
   };
 
@@ -27,12 +26,11 @@ const BalanceSheet = () => {
     const canvas = await html2canvas(input);
     const pdf = new jsPDF('p', 'mm', 'a4');
     pdf.addImage(canvas, 'JPEG', 10, 10, 190, 0);
-    pdf.save(`balance-sheet-${selectedDate.toISOString().split('T')[0]}.pdf`);
+    pdf.save(`balance-${selectedDate.toISOString().split('T')[0]}.pdf`);
   };
 
   const handleUpdate = async () => {
     if (!editData.model || !editData.id || !editData.field) return;
-    
     try {
       await fetch(`http://localhost:4000/api/balance/${editData.model}/${editData.id}`, {
         method: 'PATCH',
@@ -46,181 +44,163 @@ const BalanceSheet = () => {
     }
   };
 
-  useEffect(() => {
-    fetchBalance(selectedDate);
-  }, [selectedDate]);
+  const setOpeningBalance = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch('http://localhost:4000/api/balance/opening', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: parseFloat(newOpening), date: selectedDate })
+      });
+      fetchBalance(selectedDate);
+      setNewOpening('');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
-  if (!balanceData) return <div className="text-center p-8">Loading...</div>;
-  
-  const CompanyDeductionSection = ({ title, amount, model, onEdit }) => (
-    <div className="p-4 bg-purple-50 rounded">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="font-medium text-gray-700">{title}</h3>
-          <span className="text-purple-600 text-xl font-semibold">
-            SAR. {amount.toLocaleString()}
-          </span>
-        </div>
-        <button
-          onClick={() => onEdit({ model, field: 'amount' })}
-          className="text-purple-600 hover:text-purple-700 px-4 py-2 border border-purple-200 rounded"
-        >
-          Edit Entries
-        </button>
-      </div>
-    </div>
-  );
-  
+  useEffect(() => { fetchBalance(selectedDate); }, [selectedDate]);
+
+  if (!balanceData) return <div className="p-8 text-center">Loading...</div>;
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6 max-w-6xl mx-auto" id="balance-sheet">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Daily Balance Sheet</h1>
-        <div className="flex gap-4 items-center">
-          <DatePicker
-            selected={selectedDate}
-            onChange={date => setSelectedDate(date)}
-            dateFormat="dd/MM/yyyy"
-            className="border p-2 rounded"
-          />
-          <button
-            onClick={generatePDF}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Export PDF
-          </button>
-        </div>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 bg-gray-50 rounded">
-            <h3 className="text-sm font-medium text-gray-500">Opening Balance</h3>
-            <p className="text-2xl font-semibold">
-              SAR. {balanceData.openingBalance.toLocaleString()}
-            </p>
-          </div>
-          <div className="p-4 bg-gray-50 rounded">
-            <h3 className="text-sm font-medium text-gray-500">Current Balance</h3>
-            <p className={`text-2xl font-semibold ${
-              balanceData.currentBalance >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              SAR. {balanceData.currentBalance.toLocaleString()}
-            </p>
+    <div className="min-h-screen bg-gray-50 p-6 max-w-7xl mx-auto" id="balance-sheet">
+      <header className="flex flex-col md:flex-row gap-6 mb-8">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Financial Dashboard</h1>
+          <div className="flex items-center gap-4">
+            <DatePicker
+              selected={selectedDate}
+              onChange={date => setSelectedDate(date)}
+              dateFormat="dd MMM yyyy"
+              className="bg-white border rounded-lg px-4 py-2 shadow-sm"
+            />
+            <button onClick={generatePDF} className="bg-white text-gray-600 px-4 py-2 rounded-lg border shadow-sm hover:shadow-md">
+              Export PDF
+            </button>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Section title="Cash Inflows" amount={balanceData.inflows} color="green" />
-          
-          <DeductionSection 
-            title="Expenses" 
-            amount={balanceData.expenses} 
-            model="expense" 
-            onEdit={setEditData}
-          />
-
-          <DeductionSection
-            title="Loan Deductions"
-            amount={balanceData.loans}
-            model="loan"
-            field="remaining"
-            onEdit={setEditData}
-          />
-
-        <Section title="Next Day Opening Balance" 
-                   amount={balanceData.nextDayOpening} 
-                   color="blue" />
-        
-          {/* Company Deductions */}
-          {Object.entries(balanceData.companies).map(([company, amount]) => (
-            <CompanyDeductionSection
-              key={company}
-              title={`${company} Deductions`}
-              amount={amount}
-              model={company.toLowerCase()}
-              onEdit={setEditData}
-            />
-          ))}
-        
-          {/* Delivery Deductions */}
-          {Object.entries(balanceData.deliveries).map(([service, amount]) => (
-            <DeductionSection
-              key={service}
-              title={`${service} Delivery`}
-              amount={amount}
-              model={service.toLowerCase()}
-              field="amount"
-              onEdit={setEditData}
-            />
-          ))}
-        </div>
-
-        {editData.model && (
-          <div className="mt-6 p-4 bg-yellow-50 rounded">
-            <div className="flex gap-4 items-center">
+        <form onSubmit={setOpeningBalance} className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-600">Set Opening Balance</label>
+            <div className="flex gap-2">
               <input
                 type="number"
-                value={editData.value}
-                onChange={(e) => setEditData(d => ({ ...d, value: e.target.value }))}
-                className="border p-2 rounded w-32"
-                placeholder="New amount"
+                value={newOpening}
+                onChange={(e) => setNewOpening(e.target.value)}
+                className="border rounded-lg px-4 py-2 flex-1"
+                placeholder="Enter amount"
               />
-              <button
-                onClick={handleUpdate}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-              >
-                Confirm Update
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Set
               </button>
-              <button
-                onClick={() => setEditData({ model: null, id: null, field: '', value: '' })}
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              >
+            </div>
+          </div>
+        </form>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Cash Flow</h2>
+          <div className="space-y-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Opening Balance</span>
+                <span className="text-blue-600 font-semibold">SAR {balanceData.openingBalance?.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Cash Inflows</span>
+                <span className="text-green-600 font-semibold">SAR {balanceData.inflows?.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Next Day Opening</span>
+                <span className="text-purple-600 font-semibold">SAR {balanceData.nextDayOpening?.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Deductions</h2>
+          <div className="space-y-4">
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Total Expenses</span>
+                <span className="text-red-600 font-semibold">SAR {balanceData.expenses?.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Loan Payments</span>
+                <span className="text-red-600 font-semibold">SAR {balanceData.loans?.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Receivings</span>
+                <span className="text-red-600 font-semibold">SAR {balanceData.receivings?.toLocaleString()}</span>
+              </div>
+            </div>
+            {Object.entries(balanceData.deliveries).map(([service, amount]) => (
+              <div key={service} className="bg-red-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{service} Delivery</span>
+                  <span className="text-red-600 font-semibold">SAR {amount?.toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+            {Object.entries(balanceData.companies).map(([company, amount]) => (
+              <div key={company} className="bg-red-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{company} Deductions</span>
+                  <span className="text-red-600 font-semibold">SAR {amount?.toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl shadow-sm mt-6">
+        <div className="bg-emerald-50 p-6 rounded-lg">
+          <div className="flex justify-between items-center">
+            <span className="text-xl font-semibold">Current Balance</span>
+            <span className={`text-2xl font-bold ${balanceData.currentBalance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              SAR {balanceData.currentBalance?.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {editData.model && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-96">
+            <h3 className="text-lg font-semibold mb-4">Edit Transaction</h3>
+            <input
+              type="number"
+              value={editData.value}
+              onChange={(e) => setEditData(d => ({ ...d, value: e.target.value }))}
+              className="w-full border rounded-lg px-4 py-2 mb-4"
+              placeholder="New amount"
+            />
+            <div className="flex gap-3">
+              <button onClick={handleUpdate} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                Save
+              </button>
+              <button onClick={() => setEditData({ model: null, id: null, field: '', value: '' })} className="flex-1 bg-gray-200 px-4 py-2 rounded-lg">
                 Cancel
               </button>
             </div>
           </div>
-        )}
-
-        <div className="mt-4 text-sm text-gray-500">
-          Last updated: {new Date(balanceData.lastUpdated).toLocaleString()}
         </div>
-      </div>
-
-      <Link href="/" className="text-blue-600 hover:text-blue-700 text-sm">
-        ← Back to Dashboard
-      </Link>
+      )}
     </div>
   );
 };
-
-const Section = ({ title, amount, color = 'gray' }) => (
-  <div className={`p-4 bg-${color}-50 rounded`}>
-    <div className="flex justify-between items-center">
-      <h3 className="font-medium text-gray-700">{title}</h3>
-      <span className={`text-xl font-semibold text-${color}-600`}>
-        SAR. {amount.toLocaleString()}
-      </span>
-    </div>
-  </div>
-);
-
-const DeductionSection = ({ title, amount, model, field, onEdit }) => (
-  <div className="p-4 bg-red-50 rounded">
-    <div className="flex justify-between items-center">
-      <div>
-        <h3 className="font-medium text-gray-700">{title}</h3>
-        <span className="text-red-600 text-xl font-semibold">
-          SAR. {amount.toLocaleString()}
-        </span>
-      </div>
-      <button
-        onClick={() => onEdit({ model, field })}
-        className="text-red-600 hover:text-red-700 px-4 py-2 border border-red-200 rounded"
-      >
-        Edit Entries
-      </button>
-    </div>
-  </div>
-);
 
 export default BalanceSheet;

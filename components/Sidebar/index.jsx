@@ -28,7 +28,7 @@ const Sidebar = () => {
     { title: 'Loan', icon: <MdAccountBalance />, path: '/Loan' },
     { title: 'Receiving', icon: <GrMoney />, path: '/Receiving' },
     { title: 'Cash Balance', icon: <BsFillFileSpreadsheetFill />, path: '/BalanceSheet' },
-    { title: 'Card Balance', icon: <BsFillFileSpreadsheetFill />, path: '/Receiving' },
+    { title: 'Card Balance', icon: <BsFillFileSpreadsheetFill />, path: '/CardBalance' },
   ];
 
   const Deliveries = [

@@ -5,15 +5,6 @@ const nextConfig = {
     missingSuspenseWithCSRBailout: false,
     taint: true,
   },
-  // Add this critical configuration
-  async rewrites() {
-    return [
-      {
-        source: '/SaleByCash/:id',
-        destination: '/SaleByCash/[id]',
-      },
-    ];
-  },
 };
 
 export default nextConfig;
