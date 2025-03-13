@@ -14,7 +14,7 @@ const BalanceSheet = () => {
 
   const fetchBalance = async (date) => {
     try {
-      const response = await fetch(`/api/balance?date=${date.toISOString()}`);
+      const response = await fetch(`http://localhost:4000/api/balance?date=${date.toISOString()}`);
       const data = await response.json();
       setBalanceData(data);
     } catch (error) {
@@ -34,7 +34,7 @@ const BalanceSheet = () => {
     if (!editData.model || !editData.id || !editData.field) return;
     
     try {
-      await fetch(`/api/balance/${editData.model}/${editData.id}`, {
+      await fetch(`http://localhost:4000/api/balance/${editData.model}/${editData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ [editData.field]: parseFloat(editData.value) })
@@ -51,7 +51,26 @@ const BalanceSheet = () => {
   }, [selectedDate]);
 
   if (!balanceData) return <div className="text-center p-8">Loading...</div>;
-
+  
+  const CompanyDeductionSection = ({ title, amount, model, onEdit }) => (
+    <div className="p-4 bg-purple-50 rounded">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="font-medium text-gray-700">{title}</h3>
+          <span className="text-purple-600 text-xl font-semibold">
+            SAR. {amount.toLocaleString()}
+          </span>
+        </div>
+        <button
+          onClick={() => onEdit({ model, field: 'amount' })}
+          className="text-purple-600 hover:text-purple-700 px-4 py-2 border border-purple-200 rounded"
+        >
+          Edit Entries
+        </button>
+      </div>
+    </div>
+  );
+  
   return (
     <div className="min-h-screen bg-gray-50 p-6 max-w-6xl mx-auto" id="balance-sheet">
       <div className="flex justify-between items-center mb-6">
@@ -108,6 +127,22 @@ const BalanceSheet = () => {
             onEdit={setEditData}
           />
 
+        <Section title="Next Day Opening Balance" 
+                   amount={balanceData.nextDayOpening} 
+                   color="blue" />
+        
+          {/* Company Deductions */}
+          {Object.entries(balanceData.companies).map(([company, amount]) => (
+            <CompanyDeductionSection
+              key={company}
+              title={`${company} Deductions`}
+              amount={amount}
+              model={company.toLowerCase()}
+              onEdit={setEditData}
+            />
+          ))}
+        
+          {/* Delivery Deductions */}
           {Object.entries(balanceData.deliveries).map(([service, amount]) => (
             <DeductionSection
               key={service}
