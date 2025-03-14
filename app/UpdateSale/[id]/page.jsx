@@ -20,7 +20,7 @@ const UpdateSale = () => {
 
   const fetchSaleDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/sales/${id}`);
+      const response = await axios.get(`https://akc-expense-server.vercel.app/api/sales/${id}`);
       if (response.data) {
         setSale({
           ...response.data,
@@ -50,7 +50,7 @@ const UpdateSale = () => {
         ...sale,
         date: new Date(sale.date).toISOString(), // Convert to ISO format for backend
       };
-      await axios.put(`http://localhost:4000/api/sales/${id}`, formattedSale);
+      await axios.put(`https://akc-expense-server.vercel.app/api/sales/${id}`, formattedSale);
       toast.success('Sale updated successfully');
       router.push('/SaleByCash');
     } catch (error) {

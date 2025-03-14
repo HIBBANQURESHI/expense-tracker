@@ -13,7 +13,7 @@ const BalanceSheet = () => {
 
   const fetchBalance = async (date) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/balance?date=${date.toISOString()}`);
+      const response = await fetch(`https://akc-expense-server.vercel.app/api/balance?date=${date.toISOString()}`);
       const data = await response.json();
       setBalanceData(data);
     } catch (error) {
@@ -32,7 +32,7 @@ const BalanceSheet = () => {
   const handleUpdate = async () => {
     if (!editData.model || !editData.id || !editData.field) return;
     try {
-      await fetch(`http://localhost:4000/api/balance/${editData.model}/${editData.id}`, {
+      await fetch(`https://akc-expense-server.vercel.app/api/balance/${editData.model}/${editData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ [editData.field]: parseFloat(editData.value) })
@@ -47,7 +47,7 @@ const BalanceSheet = () => {
   const setOpeningBalance = async (e) => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:4000/api/balance/opening', {
+      await fetch('https://akc-expense-server.vercel.app/api/balance/opening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: parseFloat(newOpening), date: selectedDate })

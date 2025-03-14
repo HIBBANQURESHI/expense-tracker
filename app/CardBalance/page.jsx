@@ -23,7 +23,7 @@ const CardBalance = () => {
     if(endDate) params.append('endDate', endDate.toISOString());
     if(typeFilter !== 'all') params.append('type', typeFilter);
     
-    const response = await fetch(`http://localhost:4000/api/card-balance?${params}`);
+    const response = await fetch(`https://akc-expense-server.vercel.app/api/card-balance?${params}`);
     const data = await response.json();
     setEntries(data.entries);
     setTotals({ credits: data.credits, debits: data.debits, balance: data.balance });
@@ -31,7 +31,7 @@ const CardBalance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetch('http://localhost:4000/api/card-balance', {
+    await fetch('https://akc-expense-server.vercel.app/api/card-balance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...formData, amount: parseFloat(formData.amount) })
@@ -41,7 +41,7 @@ const CardBalance = () => {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:4000/api/card-balance/${id}`, { method: 'DELETE' });
+    await fetch(`https://akc-expense-server.vercel.app/api/card-balance/${id}`, { method: 'DELETE' });
     fetchEntries();
   };
 
