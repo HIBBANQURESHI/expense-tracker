@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const DatePicker = dynamic(() => import('react-datepicker'), { ssr: false });
 import 'react-datepicker/dist/react-datepicker.css';
@@ -58,10 +60,58 @@ const SaleByCash = () => {
     }
   };
 
-  // Calculate all totals
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.text("Monthly Sales Summary", 14, 15);
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    
+    const summaryData = [
+      ["Cash Sales", `SAR ${monthlySummary.cashAmount?.toFixed(2) || '0.00'}`, `${monthlySummary.cashSales} transactions`],
+      ["Card Sales", `SAR ${monthlySummary.cardAmount?.toFixed(2) || '0.00'}`, `${monthlySummary.cardSales} transactions`],
+      ["Monthly Total", `SAR ${monthlySummary.totalAmount?.toFixed(2) || '0.00'}`, `${monthlySummary.totalSales} transactions`]
+    ];
+    
+    doc.autoTable({
+      startY: 25,
+      head: [['Category', 'Amount', 'Transactions']],
+      body: summaryData,
+      theme: 'grid',
+      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+    });
+
+    doc.addPage();
+    doc.setFontSize(18);
+    doc.text("Sales Details", 14, 15);
+    doc.setFontSize(12);
+    
+    const salesData = filteredSales.map(sale => [
+      sale.name,
+      sale.description,
+      `SAR ${sale.amount.toFixed(2)}`,
+      sale.paymentMethod.toUpperCase(),
+      new Date(sale.date).toLocaleDateString()
+    ]);
+
+    doc.autoTable({
+      startY: 25,
+      head: [['Name', 'Description', 'Amount', 'Payment', 'Date']],
+      body: salesData,
+      theme: 'grid',
+      foot: [['', '', `SAR ${totals.grandTotal.toFixed(2)}`, '', '']],
+      didDrawPage: (data) => {
+        doc.setFontSize(12);
+        doc.text(`Total Filtered Sales: SAR ${totals.grandTotal.toFixed(2)}`, 14, data.pageCount * 280 - 10);
+      }
+    });
+
+    doc.save(`sales-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   const calculateTotals = () => {
     return filteredSales.reduce((acc, sale) => {
-      // Grand totals
       acc.grandTotal += sale.amount;
       if (sale.paymentMethod === 'cash') {
         acc.grandCashTotal += sale.amount;
@@ -69,39 +119,24 @@ const SaleByCash = () => {
         acc.grandCardTotal += sale.amount;
       }
 
-      // Per-name totals
       if (!acc.nameTotals[sale.name]) {
-        acc.nameTotals[sale.name] = {
-          total: 0,
-          cash: 0,
-          card: 0
-        };
+        acc.nameTotals[sale.name] = { total: 0, cash: 0, card: 0 };
       }
       acc.nameTotals[sale.name].total += sale.amount;
-      if (sale.paymentMethod === 'cash') {
-        acc.nameTotals[sale.name].cash += sale.amount;
-      } else {
-        acc.nameTotals[sale.name].card += sale.amount;
-      }
+      sale.paymentMethod === 'cash' 
+        ? acc.nameTotals[sale.name].cash += sale.amount 
+        : acc.nameTotals[sale.name].card += sale.amount;
 
       return acc;
-    }, {
-      grandTotal: 0,
-      grandCashTotal: 0,
-      grandCardTotal: 0,
-      nameTotals: {}
-    });
+    }, { grandTotal: 0, grandCashTotal: 0, grandCardTotal: 0, nameTotals: {} });
   };
 
-  // Filter logic
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.name.toLowerCase().includes(search.toLowerCase());
     const matchesDate = selectedDate 
-      ? new Date(sale.date).toLocaleDateString().split("T")[0] === new Date(selectedDate).toLocaleDateString().split("T")[0]
+      ? new Date(sale.date).toLocaleDateString() === new Date(selectedDate).toLocaleDateString()
       : true;
-    const matchesPayment = paymentFilter === 'all' 
-      ? true 
-      : sale.paymentMethod === paymentFilter;
+    const matchesPayment = paymentFilter === 'all' ? true : sale.paymentMethod === paymentFilter;
 
     return matchesSearch && matchesDate && matchesPayment;
   });
@@ -109,15 +144,16 @@ const SaleByCash = () => {
   const totals = calculateTotals();
 
   const handleDelete = async (id) => {
-      try {
-        await axios.delete(`https://akc-expense-server.vercel.app/api/sales/${id}`);
-        toast.success("Sale record deleted successfully");
-        fetchSales();
-        fetchMonthlySummary(); // Refresh monthly summary after deletion
-      } catch (error) {
-        toast.error("Error deleting sale record");
-      }
-    };
+    try {
+      await axios.delete(`https://akc-expense-server.vercel.app/api/sales/${id}`);
+      toast.success("Sale record deleted successfully");
+      fetchSales();
+      fetchMonthlySummary();
+    } catch (error) {
+      toast.error("Error deleting sale record");
+    }
+  };
+
   return (
     <motion.div 
       className="min-h-screen bg-white p-4 sm:p-6 flex flex-col items-center max-w-5xl mx-auto"
@@ -127,9 +163,7 @@ const SaleByCash = () => {
       
       <h1 className="text-2xl sm:text-3xl font-medium text-gray-800 mb-6">Sales Overview</h1>
 
-      {/* Monthly Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 w-full">
-        {/* Cash Sales Card */}
         <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-blue-600">Cash Sales</h3>
           <p className="mt-2 text-2xl font-semibold text-blue-700">
@@ -140,7 +174,6 @@ const SaleByCash = () => {
           </div>
         </div>
 
-        {/* Card Sales Card */}
         <div className="bg-green-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-green-600">Card Sales</h3>
           <p className="mt-2 text-2xl font-semibold text-green-700">
@@ -151,7 +184,6 @@ const SaleByCash = () => {
           </div>
         </div>
 
-        {/* Monthly Total Card */}
         <div className="bg-purple-50 p-4 rounded-lg shadow-sm">
           <h3 className="text-sm font-medium text-purple-600">Monthly Total</h3>
           <p className="mt-2 text-2xl font-semibold text-purple-700">
@@ -163,7 +195,6 @@ const SaleByCash = () => {
         </div>
       </div>
 
-      {/* Filters Section */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6 w-full">
         <div className="relative flex-1">
           <input
@@ -195,21 +226,27 @@ const SaleByCash = () => {
           <option value="card">Card Only</option>
         </select>
 
-        <Link href="/CreateSale">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition-colors shadow-sm">
-            + New Sale
+        <div className="flex gap-2">
+          <button 
+            onClick={handleDownloadPDF}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors shadow-sm"
+          >
+            Download PDF
           </button>
-        </Link>
+          <Link href="/CreateSale">
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors shadow-sm">
+              + New Sale
+            </button>
+          </Link>
+        </div>
       </div>
 
-      {/* Search Summary */}
       {search && (
         <div className="mb-4 p-4 bg-blue-50 rounded-lg shadow-sm w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <h3 className="text-sm font-medium text-blue-700 mb-2 sm:mb-0">
               Showing {filteredSales.length} results for "{search}"
             </h3>
-            
             <div className="text-right">
               <p className="text-sm font-semibold text-blue-800">
                 Grand Total: SAR.{totals.grandTotal.toFixed(2)}
@@ -220,7 +257,6 @@ const SaleByCash = () => {
             </div>
           </div>
 
-          {/* Name-wise Breakdown */}
           {Object.keys(totals.nameTotals).length > 0 && (
             <div className="mt-4 pt-2 border-t border-blue-100">
               {Object.entries(totals.nameTotals).map(([name, totals]) => (
@@ -238,7 +274,6 @@ const SaleByCash = () => {
         </div>
       )}
 
-      {/* Sales Table */}
       {isLoading ? (
         <div className="w-full flex justify-center py-10">
           <div className="animate-pulse text-gray-500">Loading sales data...</div>
@@ -248,7 +283,6 @@ const SaleByCash = () => {
           {filteredSales.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
-                {/* Table Header */}
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
                     {['Name', 'Description', 'Amount', 'Payment', 'Date', 'Actions'].map((header) => (
@@ -262,7 +296,6 @@ const SaleByCash = () => {
                   </tr>
                 </thead>
 
-                {/* Table Body */}
                 <tbody>
                   {filteredSales.map((sale) => (
                     <tr key={sale._id} className="border-b border-gray-100 hover:bg-gray-50">
@@ -290,7 +323,7 @@ const SaleByCash = () => {
                           </button>
                         </Link>
                         <button 
-                          onClick={() => handleDelete(sale._id, sale.name)}
+                          onClick={() => handleDelete(sale._id)}
                           className="text-red-600 hover:text-red-800"
                         >
                           Delete
