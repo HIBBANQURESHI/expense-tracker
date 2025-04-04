@@ -13,12 +13,12 @@ const BalanceSheet = () => {
 
   const fetchBalance = async (date) => {
     try {
-      const normalizedDate = new Date(date);
-      normalizedDate.setHours(0, 0, 0, 0); // Normalize to local midnight
-      const dateString = normalizedDate.toISOString().split('T')[0]; // Get YYYY-MM-DD
+      const utcDate = new Date(date);
+      utcDate.setUTCHours(0, 0, 0, 0);
+      const dateParam = utcDate.toISOString().split('T')[0];
 
       const response = await fetch(
-        `https://akc-expense-server.vercel.app/api/balance?date=${dateString}`
+        `https://akc-expense-server.vercel.app/api/balance?date=${dateParam}`
       );
       const data = await response.json();
       setBalanceData(data);
@@ -84,9 +84,9 @@ const BalanceSheet = () => {
             <DatePicker
               selected={selectedDate}
               onChange={date => {
-                const normalizedDate = new Date(date);
-                normalizedDate.setHours(0, 0, 0, 0); // Force to local midnight
-                setSelectedDate(normalizedDate);
+                const utcDate = new Date(date);
+                utcDate.setUTCHours(0, 0, 0, 0);
+                setSelectedDate(utcDate);
               }}
               dateFormat="dd MMM yyyy"
               className="bg-white border rounded-lg px-4 py-2 shadow-sm"
