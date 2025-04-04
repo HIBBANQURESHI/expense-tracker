@@ -13,7 +13,13 @@ const BalanceSheet = () => {
 
   const fetchBalance = async (date) => {
     try {
-      const response = await fetch(`https://akc-expense-server.vercel.app/api/balance?date=${date.toISOString()}`);
+      const normalizedDate = new Date(date);
+      normalizedDate.setHours(0, 0, 0, 0); // Normalize to local midnight
+      const dateString = normalizedDate.toISOString().split('T')[0]; // Get YYYY-MM-DD
+
+      const response = await fetch(
+        `https://akc-expense-server.vercel.app/api/balance?date=${dateString}`
+      );
       const data = await response.json();
       setBalanceData(data);
     } catch (error) {
@@ -47,12 +53,18 @@ const BalanceSheet = () => {
   const setOpeningBalance = async (e) => {
     e.preventDefault();
     try {
+      const normalizedDate = new Date(selectedDate);
+      normalizedDate.setHours(0, 0, 0, 0); // Local midnight
+
       await fetch('https://akc-expense-server.vercel.app/api/balance/opening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: parseFloat(newOpening), date: selectedDate })
+        body: JSON.stringify({
+          amount: parseFloat(newOpening),
+          date: normalizedDate.toISOString() // Send UTC equivalent
+        })
       });
-      fetchBalance(selectedDate);
+      fetchBalance(normalizedDate);
       setNewOpening('');
     } catch (error) {
       console.error('Error:', error);
@@ -71,7 +83,11 @@ const BalanceSheet = () => {
           <div className="flex items-center gap-4">
             <DatePicker
               selected={selectedDate}
-              onChange={date => setSelectedDate(date)}
+              onChange={date => {
+                const normalizedDate = new Date(date);
+                normalizedDate.setHours(0, 0, 0, 0); // Force to local midnight
+                setSelectedDate(normalizedDate);
+              }}
               dateFormat="dd MMM yyyy"
               className="bg-white border rounded-lg px-4 py-2 shadow-sm"
             />
